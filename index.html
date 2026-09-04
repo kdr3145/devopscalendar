@@ -7,6 +7,353 @@
 <title>개발 근태 관제</title>
 <link rel="preconnect" href="https://cdn.jsdelivr.net">
 <link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/orioncactus/pretendard@v1.3.9/dist/web/variable/pretendardvariable.css">
+<style>
+
+:root{
+  --bg:#f4f1ec; --surface:#ffffff; --surface-2:#efebe3; --surface-3:#e7e2d8;
+  --border:#e2ddd2; --border-strong:#cdc6b7;
+  --ink:#211d17; --ink-2:#6c655a; --ink-3:#968d7e;
+  --accent:#b26a15; --accent-2:#8a5210; --accent-soft:#f6ead6; --on-accent:#fff;
+  --ok:#3a9d6a; --ok-bg:#e4f2e9;
+  --warn:#c79a12; --warn-bg:#f7eec9;
+  --caution:#d1782c; --caution-bg:#f9e6d3;
+  --over:#cf4141; --over-bg:#f8dedd;
+  --idle:#b8b0a2; --idle-bg:#ece8df;
+  --shadow:0 1px 2px rgba(40,32,18,.05),0 4px 14px rgba(40,32,18,.06);
+  --shadow-lg:0 8px 30px rgba(40,32,18,.16);
+  --radius:12px; --radius-sm:8px;
+  --sans:"Pretendard Variable",-apple-system,BlinkMacSystemFont,"Segoe UI","Apple SD Gothic Neo","Malgun Gothic",sans-serif;
+  --mono:"Pretendard Variable",-apple-system,BlinkMacSystemFont,ui-monospace,sans-serif;
+  --t-work:#9a927f; --t-vac:#cf4141; --t-am:#d1782c; --t-pm:#c79a12;
+  --t-night:#2a8f8f; --t-sick:#8b5cc7; --t-home:#3878c2; --t-extra:#3a9d6a;
+  --t-summer:#d8568f; --t-civil:#5b6b8c; --t-etc:#8a8276;
+}
+@media (prefers-color-scheme:dark){:root:not([data-theme="light"]){
+  --bg:#16130f; --surface:#201c16; --surface-2:#282219; --surface-3:#332c21;
+  --border:#332c21; --border-strong:#48402f;
+  --ink:#efe9df; --ink-2:#aaa091; --ink-3:#7c7364;
+  --accent:#dfa04a; --accent-2:#c9863a; --accent-soft:#3a2d17; --on-accent:#1c1608;
+  --ok:#57c088; --ok-bg:#173226; --warn:#e0bb3f; --warn-bg:#332b0f;
+  --caution:#e4924a; --caution-bg:#331f0f; --over:#e56a6a; --over-bg:#331616;
+  --idle:#6b6455; --idle-bg:#252017;
+  --shadow:0 1px 2px rgba(0,0,0,.3),0 4px 14px rgba(0,0,0,.3);
+  --shadow-lg:0 8px 30px rgba(0,0,0,.5);
+  --t-work:#8b8474; --t-vac:#e56a6a; --t-am:#e4924a; --t-pm:#e0bb3f;
+  --t-night:#41b3b3; --t-sick:#a884d8; --t-home:#5d97dd; --t-extra:#57c088;
+  --t-summer:#e57ba9; --t-civil:#8195b8; --t-etc:#a49c8e;
+}}
+:root[data-theme="dark"]{
+  --bg:#16130f; --surface:#201c16; --surface-2:#282219; --surface-3:#332c21;
+  --border:#332c21; --border-strong:#48402f;
+  --ink:#efe9df; --ink-2:#aaa091; --ink-3:#7c7364;
+  --accent:#dfa04a; --accent-2:#c9863a; --accent-soft:#3a2d17; --on-accent:#1c1608;
+  --ok:#57c088; --ok-bg:#173226; --warn:#e0bb3f; --warn-bg:#332b0f;
+  --caution:#e4924a; --caution-bg:#331f0f; --over:#e56a6a; --over-bg:#331616;
+  --idle:#6b6455; --idle-bg:#252017;
+  --shadow:0 1px 2px rgba(0,0,0,.3),0 4px 14px rgba(0,0,0,.3);
+  --shadow-lg:0 8px 30px rgba(0,0,0,.5);
+  --t-work:#8b8474; --t-vac:#e56a6a; --t-am:#e4924a; --t-pm:#e0bb3f;
+  --t-night:#41b3b3; --t-sick:#a884d8; --t-home:#5d97dd; --t-extra:#57c088;
+  --t-summer:#e57ba9; --t-civil:#8195b8; --t-etc:#a49c8e;
+}
+*{box-sizing:border-box}
+[hidden]{display:none!important}
+body{margin:0;background:var(--bg);color:var(--ink);font-family:var(--sans);
+  font-size:14px;line-height:1.5;-webkit-font-smoothing:antialiased}
+.mono{font-family:var(--mono);font-variant-numeric:tabular-nums}
+button{font-family:inherit;cursor:pointer}
+:focus-visible{outline:2px solid var(--accent);outline-offset:2px;border-radius:4px}
+::-webkit-scrollbar{height:10px;width:10px}
+::-webkit-scrollbar-thumb{background:var(--border-strong);border-radius:6px}
+
+/* ---------- shell ---------- */
+.wrap{max-width:1240px;margin:0 auto;padding:0 20px 64px}
+header.top{position:sticky;top:0;z-index:30;background:color-mix(in srgb,var(--bg) 88%,transparent);
+  backdrop-filter:saturate(1.4) blur(10px);border-bottom:1px solid var(--border)}
+.top-in{max-width:1240px;margin:0 auto;padding:14px 20px;display:flex;align-items:center;gap:16px;flex-wrap:wrap}
+.brand{display:flex;align-items:center;gap:12px;margin-right:auto;min-width:0}
+.mark{width:38px;height:38px;border-radius:10px;flex:none;
+  background:linear-gradient(145deg,var(--accent),var(--accent-2));
+  color:var(--on-accent);display:grid;place-items:center;font-weight:700;
+  font-family:var(--mono);font-size:15px;box-shadow:var(--shadow)}
+.brand h1{font-size:16px;font-weight:700;margin:0;letter-spacing:-.01em;white-space:nowrap}
+.brand p{margin:1px 0 0;font-size:11.5px;color:var(--ink-2);letter-spacing:.02em}
+.hd-ctrl{display:flex;align-items:center;gap:8px}
+.dot{width:8px;height:8px;border-radius:50%;background:var(--idle);flex:none;box-shadow:0 0 0 3px var(--idle-bg)}
+.dot.live{background:var(--ok);box-shadow:0 0 0 3px var(--ok-bg)}
+.dot.off{background:var(--over);box-shadow:0 0 0 3px var(--over-bg)}
+.conn{display:flex;align-items:center;gap:7px;font-size:11.5px;color:var(--ink-2);
+  padding:6px 10px;background:var(--surface);border:1px solid var(--border);border-radius:99px}
+.btn{border:1px solid var(--border-strong);background:var(--surface);color:var(--ink);
+  border-radius:8px;padding:7px 12px;font-size:12.5px;font-weight:500;display:inline-flex;
+  align-items:center;gap:6px;transition:.14s}
+.btn:hover{border-color:var(--accent);color:var(--accent)}
+.btn.on{background:var(--accent);border-color:var(--accent);color:var(--on-accent)}
+.btn.ghost{border-color:transparent;background:transparent;padding:7px 8px}
+select.sel{font-family:inherit;font-size:12.5px;font-weight:500;color:var(--ink);
+  background:var(--surface);border:1px solid var(--border-strong);border-radius:8px;
+  padding:7px 10px;appearance:none;background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='10' height='6' viewBox='0 0 10 6'%3E%3Cpath d='M1 1l4 4 4-4' stroke='%23968d7e' stroke-width='1.5' fill='none' stroke-linecap='round'/%3E%3C/svg%3E");
+  background-repeat:no-repeat;background-position:right 9px center;padding-right:26px}
+
+/* ---------- tabs ---------- */
+nav.tabs{display:flex;gap:2px;margin:18px 0 22px;border-bottom:1px solid var(--border);flex-wrap:wrap}
+.tab{border:none;background:none;padding:10px 15px 12px;font-size:13.5px;font-weight:600;
+  color:var(--ink-2);border-bottom:2px solid transparent;margin-bottom:-1px;letter-spacing:-.01em}
+.tab:hover{color:var(--ink)}
+.tab.on{color:var(--accent);border-bottom-color:var(--accent)}
+.tab .n{font-family:var(--mono);font-size:11px;color:var(--ink-3);margin-left:5px;font-weight:500}
+.tab.on .n{color:var(--accent)}
+
+/* ---------- kpi ---------- */
+.kpis{display:grid;grid-template-columns:repeat(4,1fr);gap:14px;margin-bottom:26px}
+.kpi{background:var(--surface);border:1px solid var(--border);border-radius:var(--radius);
+  padding:16px 18px;box-shadow:var(--shadow)}
+.kpi .lab{font-size:11.5px;color:var(--ink-2);font-weight:500;letter-spacing:.01em;
+  display:flex;align-items:center;gap:6px}
+.kpi .val{font-family:var(--mono);font-size:30px;font-weight:600;letter-spacing:-.02em;
+  margin-top:8px;line-height:1;display:flex;align-items:baseline;gap:6px}
+.kpi .val small{font-size:14px;color:var(--ink-3);font-weight:500}
+.kpi .sub{font-size:11.5px;color:var(--ink-3);margin-top:7px}
+
+/* ---------- panels ---------- */
+.panel{background:var(--surface);border:1px solid var(--border);border-radius:var(--radius);
+  box-shadow:var(--shadow);margin-bottom:20px;overflow:hidden}
+.panel-hd{padding:15px 18px;border-bottom:1px solid var(--border);display:flex;
+  align-items:center;gap:12px;flex-wrap:wrap}
+.panel-hd h2{margin:0;font-size:14.5px;font-weight:700;letter-spacing:-.01em}
+.panel-hd .desc{font-size:11.5px;color:var(--ink-2)}
+.panel-hd .sp{margin-left:auto}
+.panel-bd{padding:18px}
+.grid-2{display:grid;grid-template-columns:1fr 1fr;gap:20px}
+.grid-3{display:grid;grid-template-columns:repeat(3,1fr);gap:20px}
+.dist2{display:grid;grid-template-columns:1fr 1fr;gap:28px}
+.dist-t{font-size:12px;font-weight:700;color:var(--ink-2);margin-bottom:12px;padding-bottom:8px;border-bottom:1px solid var(--border)}
+@media (max-width:620px){.dist2{grid-template-columns:1fr;gap:20px}}
+
+/* ---------- bar chart ---------- */
+.barc{display:flex;flex-direction:column;gap:9px}
+.barrow{display:grid;grid-template-columns:78px 1fr 34px;align-items:center;gap:10px;font-size:12px}
+.barrow .bl{color:var(--ink-2);white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.bartrk{height:9px;background:var(--surface-2);border-radius:6px;overflow:hidden}
+.barfill{height:100%;border-radius:6px;background:var(--accent);transition:width .5s cubic-bezier(.2,.7,.3,1)}
+.barrow .bv{font-family:var(--mono);text-align:right;color:var(--ink);font-weight:500}
+
+/* ---------- trend ---------- */
+.trend{display:flex;align-items:flex-end;gap:6px;height:120px;padding-top:8px}
+.tcol{flex:1;display:flex;flex-direction:column;align-items:center;gap:6px;min-width:0}
+.tbar{width:100%;max-width:26px;background:var(--accent-soft);border:1px solid var(--accent);
+  border-bottom:none;border-radius:5px 5px 0 0;position:relative;min-height:2px;transition:height .5s}
+.tbar b{position:absolute;top:-16px;left:50%;transform:translateX(-50%);font-family:var(--mono);
+  font-size:10px;color:var(--ink-2);font-weight:500}
+.tcol .tm{font-size:10.5px;color:var(--ink-3);font-family:var(--mono)}
+
+/* ---------- table ---------- */
+.tbl-scroll{overflow-x:auto}
+table{border-collapse:collapse;width:100%;font-size:12.5px}
+thead th{position:sticky;top:0;background:var(--surface-2);text-align:left;font-weight:600;
+  color:var(--ink-2);padding:10px 12px;white-space:nowrap;font-size:11.5px;letter-spacing:.01em;
+  border-bottom:1px solid var(--border);z-index:2}
+tbody td{padding:9px 12px;border-bottom:1px solid var(--border);white-space:nowrap}
+tbody tr:hover{background:var(--surface-2)}
+tbody tr.inactive{color:var(--ink-3)}
+tbody tr.inactive .nm{color:var(--ink-2)}
+td.nm{font-weight:600;color:var(--ink)}
+.chip{display:inline-flex;align-items:center;gap:5px;font-size:11px;font-weight:600;
+  padding:2.5px 8px;border-radius:99px;line-height:1.4;white-space:nowrap}
+.chip.dept{background:var(--surface-3);color:var(--ink-2)}
+.chip.on-badge{background:var(--ok-bg);color:var(--ok)}
+.chip.off-badge{background:var(--idle-bg);color:var(--ink-3)}
+.chip.dot::before{content:"";width:6px;height:6px;border-radius:50%;background:currentColor}
+a.mail{color:var(--accent);text-decoration:none}
+a.mail:hover{text-decoration:underline}
+.muted{color:var(--ink-3)}
+
+/* ---------- filters ---------- */
+.filters{display:flex;gap:8px;align-items:center;flex-wrap:wrap}
+.search{position:relative}
+.search input{font-family:inherit;font-size:12.5px;padding:7px 10px 7px 30px;border-radius:8px;
+  border:1px solid var(--border-strong);background:var(--surface);color:var(--ink);width:180px}
+.search svg{position:absolute;left:9px;top:50%;transform:translateY(-50%);opacity:.5}
+.seg{display:inline-flex;background:var(--surface-2);border:1px solid var(--border);border-radius:8px;padding:2px}
+.seg button{border:none;background:none;padding:6px 11px;font-size:12px;font-weight:500;color:var(--ink-2);border-radius:6px}
+.seg button.on{background:var(--surface);color:var(--ink);box-shadow:var(--shadow)}
+
+/* ---------- heatmap ---------- */
+.hm-scroll{overflow-x:auto}
+.hm{border-collapse:separate;border-spacing:0;font-size:12px;min-width:820px}
+.hm th{position:sticky;top:0;background:var(--surface);z-index:2}
+.hm th,.hm td{padding:0}
+.hm .rh{position:sticky;left:0;z-index:3;background:var(--surface);text-align:left;
+  padding:7px 12px;border-bottom:1px solid var(--border);border-right:1px solid var(--border);min-width:150px}
+.hm thead .rh{z-index:4}
+.hm .rh .rn{font-weight:600}
+.hm .rh .rr{font-size:10.5px;color:var(--ink-3)}
+.hm .mh{text-align:center;font-family:var(--mono);font-size:10.5px;color:var(--ink-2);
+  padding:8px 0;border-bottom:1px solid var(--border);font-weight:500;min-width:42px}
+.hm .cum-h{text-align:center;font-size:10.5px;color:var(--ink-2);padding:8px 8px;
+  border-bottom:1px solid var(--border);border-left:1px solid var(--border);font-weight:600;min-width:78px}
+.cell{text-align:center;font-family:var(--mono);font-size:11.5px;padding:7px 0;
+  border-bottom:1px solid var(--border);border-right:1px solid var(--border);color:var(--ink)}
+.cell.z{color:var(--ink-3)}
+.cell.idle{background:var(--idle-bg);color:transparent}
+.cell.idle::after{content:"·";color:var(--ink-3)}
+.cum{text-align:center;padding:6px 8px;border-bottom:1px solid var(--border);border-left:1px solid var(--border);font-family:var(--mono)}
+.cum .cv{font-weight:600;font-size:13px}
+.cum .cx{font-size:10px;color:var(--ink-3)}
+.lv-ok{background:var(--ok-bg)} .lv-ok .cv{color:var(--ok)}
+.lv-warn{background:var(--warn-bg)} .lv-warn .cv{color:var(--warn)}
+.lv-caution{background:var(--caution-bg)} .lv-caution .cv{color:var(--caution)}
+.lv-over{background:var(--over-bg)} .lv-over .cv{color:var(--over)}
+.hm tbody tr:hover .rh{background:var(--surface-2)}
+.cell.hmk{cursor:pointer}
+.cell.hmk:hover{outline:2px solid var(--accent);outline-offset:-2px}
+
+/* legend for leave levels */
+.lvlegend{display:flex;gap:14px;flex-wrap:wrap;font-size:11.5px;color:var(--ink-2);align-items:center}
+.lvlegend span{display:inline-flex;align-items:center;gap:6px}
+.sw{width:13px;height:13px;border-radius:4px;border:1px solid var(--border-strong)}
+
+/* ---------- calendar ---------- */
+.caltop{display:flex;align-items:center;gap:10px;flex-wrap:wrap}
+.mnav{display:inline-flex;align-items:center;gap:2px;background:var(--surface-2);border:1px solid var(--border);border-radius:9px;padding:2px}
+.mnav button{border:none;background:none;width:30px;height:28px;border-radius:6px;color:var(--ink-2);font-size:15px;display:grid;place-items:center}
+.mnav button:hover:not(:disabled){background:var(--surface);color:var(--ink)}
+.mnav button:disabled{opacity:.3;cursor:not-allowed}
+.mnav .mlab{font-family:var(--mono);font-weight:600;font-size:13px;padding:0 8px;min-width:88px;text-align:center}
+.mnav.big{padding:3px}
+.mnav.big button{width:40px;height:38px;font-size:22px;border-radius:8px}
+.mnav.big .mlab{font-size:17px;min-width:118px}
+.legend-br{display:flex;justify-content:flex-end;margin-top:16px}
+.legend-br.full{width:100%;margin-top:18px;padding-top:14px;border-top:1px solid var(--border)}
+.legend-br.full .tlegend{width:100%;flex-wrap:wrap;gap:8px 10px;justify-content:flex-start}
+/* month combined grid */
+.mgrid{min-width:900px}
+.mgrid .md{min-width:26px;text-align:center;font-family:var(--mono);font-size:10.5px;color:var(--ink-2);font-weight:600;padding:6px 0 2px;border-bottom:none}
+.mgrid .md.sun,.mgrid .mdw.sun{color:var(--over)} .mgrid .md.sat,.mgrid .mdw.sat{color:var(--t-home)}
+.mgrid .md.tdy{color:var(--accent);background:var(--accent-soft);border-radius:5px 5px 0 0}
+.mgrid .mdw{text-align:center;font-size:9.5px;color:var(--ink-3);padding:0 0 7px;border-bottom:1px solid var(--border)}
+.mgrid .rh.sub{border-bottom:1px solid var(--border);padding:0}
+.mc{text-align:center;padding:3px 2px;border-bottom:1px solid var(--border);border-right:1px solid var(--border);min-width:26px;height:30px}
+.mc.wke{background:var(--surface-2)}
+.mc.tdy{box-shadow:inset 0 0 0 1.5px var(--accent)}
+.mc[data-mday]{cursor:pointer}
+.mc[data-mday]:hover{outline:2px solid var(--accent);outline-offset:-2px}
+.mm{display:inline-block;min-width:20px;font-size:10px;font-weight:700;color:#fff;border-radius:4px;padding:2px 3px;line-height:1.3}
+.mm.auto{background:transparent!important;color:var(--ink-3);font-weight:600}
+.mtot{text-align:center;font-weight:600;border-bottom:1px solid var(--border);border-left:1px solid var(--border);min-width:44px;background:var(--surface-2)}
+.lockpill{display:inline-flex;align-items:center;gap:6px;font-size:11.5px;font-weight:600;padding:5px 10px;border-radius:99px}
+.lockpill.locked{background:var(--over-bg);color:var(--over)}
+.lockpill.openm{background:var(--ok-bg);color:var(--ok)}
+.cal{display:grid;grid-template-columns:repeat(7,1fr);gap:6px;margin-top:16px}
+.cal .wd{text-align:center;font-size:11px;font-weight:600;color:var(--ink-2);padding:4px 0}
+.cal .wd.sun{color:var(--over)} .cal .wd.sat{color:var(--t-home)}
+.day{aspect-ratio:1/.92;border:1px solid var(--border);border-radius:9px;background:var(--surface);
+  padding:6px 7px;display:flex;flex-direction:column;gap:4px;position:relative;transition:.12s;min-height:62px}
+.day.empty{background:transparent;border:none}
+.day.pad{background:var(--surface-2);opacity:.5;border-style:dashed}
+.day .dn{font-family:var(--mono);font-size:11px;color:var(--ink-3);font-weight:500}
+.day.sun .dn{color:var(--over)} .day.sat .dn{color:var(--t-home)}
+.day.today{border-color:var(--accent);box-shadow:0 0 0 1px var(--accent)}
+.day.today .dn{color:var(--accent);font-weight:700}
+.day.clk{cursor:pointer}
+.day.clk:hover{border-color:var(--accent-2);box-shadow:var(--shadow)}
+.day.ro{background:var(--surface-2)}
+.day .mk{margin-top:auto;font-size:11.5px;font-weight:700;border-radius:6px;padding:3px 6px;
+  text-align:center;color:#fff;letter-spacing:-.01em}
+.day .mk.small{font-size:10px;padding:2px 4px}
+.t-work{background:var(--t-work)} .t-vac{background:var(--t-vac)} .t-am{background:var(--t-am)}
+.t-pm{background:var(--t-pm)} .t-night{background:var(--t-night)} .t-sick{background:var(--t-sick)}
+.t-home{background:var(--t-home)} .t-extra{background:var(--t-extra)}
+.t-summer{background:var(--t-summer)} .t-civil{background:var(--t-civil)} .t-etc{background:var(--t-etc)}
+.day .mk.auto{background:transparent;color:var(--ink-3);font-weight:600;border:1px dashed var(--border-strong)}
+.day .mk.hol{background:var(--over-bg);color:var(--over);font-size:10px;font-weight:700;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.day.inact{background:repeating-linear-gradient(135deg,var(--surface-2),var(--surface-2) 6px,transparent 6px,transparent 12px);border-style:dashed;opacity:.7}
+.day.inact .dn{color:var(--ink-3)}
+.mm.hol{background:var(--over-bg)!important;color:var(--over)!important}
+.mc.inact{background:repeating-linear-gradient(135deg,var(--surface-2),var(--surface-2) 5px,transparent 5px,transparent 10px)}
+.hol-list{max-height:280px;overflow-y:auto;margin-top:14px;border-top:1px solid var(--border)}
+.hol-row{display:flex;align-items:center;gap:12px;padding:8px 4px;border-bottom:1px solid var(--border)}
+.hol-row .hn{flex:1;font-size:13px}
+
+/* type legend */
+.tlegend{display:flex;gap:8px;flex-wrap:wrap}
+.tl{display:inline-flex;align-items:center;gap:6px;font-size:11.5px;color:var(--ink-2);
+  padding:4px 9px 4px 4px;background:var(--surface-2);border-radius:99px}
+.tl .tk{width:22px;height:18px;border-radius:5px;color:#fff;font-size:10px;font-weight:700;display:grid;place-items:center}
+
+/* popover */
+.pop{position:fixed;z-index:60;background:var(--surface);border:1px solid var(--border-strong);
+  border-radius:12px;box-shadow:var(--shadow-lg);padding:8px;width:216px}
+.pop .ph{font-size:11px;color:var(--ink-3);padding:2px 6px 7px;font-weight:600}
+.pop .pg{display:grid;grid-template-columns:1fr 1fr;gap:5px}
+.pop button.pt{border:1px solid var(--border);background:var(--surface);border-radius:8px;
+  padding:7px 8px;font-size:12px;font-weight:600;display:flex;align-items:center;gap:7px;color:var(--ink);text-align:left}
+.pop button.pt:hover{border-color:var(--accent);background:var(--surface-2)}
+.pop button.pt .tk{width:20px;height:16px;border-radius:4px;color:#fff;font-size:9.5px;font-weight:700;display:grid;place-items:center;flex:none}
+.pop button.clr{grid-column:1/3;justify-content:center;color:var(--ink-2)}
+.pop .pfoot{font-size:10.5px;color:var(--ink-3);padding:8px 6px 2px;line-height:1.4}
+
+/* mini summary in calendar */
+.calside{display:flex;flex-direction:column;gap:10px}
+.calsum{background:var(--surface-2);border:1px solid var(--border);border-radius:10px;padding:14px}
+.calsum .big{font-family:var(--mono);font-size:26px;font-weight:600;line-height:1}
+.calsum .big small{font-size:13px;color:var(--ink-3)}
+.calsum .brk{display:flex;flex-direction:column;gap:5px;margin-top:12px;font-size:12px}
+.calsum .brk .r{display:flex;justify-content:space-between;align-items:center}
+.calsum .brk .r .k{color:var(--ink-2);display:inline-flex;align-items:center;gap:7px}
+.calsum .brk .r .v{font-family:var(--mono);font-weight:600}
+.tag{width:16px;height:12px;border-radius:3px;display:inline-block}
+
+/* modal */
+.modal-bg{position:fixed;inset:0;background:rgba(20,15,6,.45);z-index:80;display:grid;place-items:center;padding:20px}
+.modal{background:var(--surface);border:1px solid var(--border-strong);border-radius:16px;
+  box-shadow:var(--shadow-lg);width:100%;max-width:400px;padding:24px}
+.modal h3{margin:0 0 6px;font-size:16px}
+.modal p{margin:0 0 16px;font-size:12.5px;color:var(--ink-2);line-height:1.5}
+.modal input{width:100%;font-family:var(--mono);font-size:16px;letter-spacing:4px;text-align:center;
+  padding:12px;border:1px solid var(--border-strong);border-radius:10px;background:var(--surface-2);color:var(--ink)}
+.modal .mrow{display:flex;gap:8px;margin-top:16px}
+.modal .mrow .btn{flex:1;justify-content:center;padding:10px}
+.btn.primary{background:var(--accent);border-color:var(--accent);color:var(--on-accent)}
+.btn.primary:hover{background:var(--accent-2);color:var(--on-accent)}
+.ic-btn{border:1px solid var(--border);background:var(--surface);border-radius:6px;width:28px;height:26px;font-size:12px;margin-right:4px;color:var(--ink-2)}
+.ic-btn:hover{border-color:var(--accent);color:var(--accent)}
+.ic-btn.danger:hover{border-color:var(--over);color:var(--over)}
+.modal.wide{max-width:560px}
+.fgrid{display:grid;grid-template-columns:1fr 1fr;gap:12px}
+.fld{display:flex;flex-direction:column;gap:4px}
+.fld.full{grid-column:1/3}
+.fld label{font-size:11px;color:var(--ink-2);font-weight:600}
+.fld input,.fld select{font-family:inherit;font-size:13px;padding:8px 10px;border:1px solid var(--border-strong);border-radius:8px;background:var(--surface);color:var(--ink)}
+.fld input.mono{font-family:var(--mono)}
+.fld .cinp{margin-top:6px}
+.modal.wide .mrow{justify-content:flex-end}
+.modal.wide .mrow .btn{flex:none;min-width:90px}
+.modal.wide .mrow .btn.del{margin-right:auto;color:var(--over);border-color:var(--over)}
+.err{color:var(--over);font-size:12px;margin-top:10px;min-height:16px}
+
+.empty-state{text-align:center;padding:60px 20px;color:var(--ink-3)}
+.empty-state .es-t{font-size:15px;font-weight:600;color:var(--ink-2);margin-bottom:6px}
+.skel{background:linear-gradient(90deg,var(--surface-2),var(--surface-3),var(--surface-2));
+  background-size:200% 100%;animation:sh 1.3s infinite;border-radius:6px}
+@keyframes sh{to{background-position:-200% 0}}
+.footnote{font-size:11px;color:var(--ink-3);line-height:1.6;margin-top:8px}
+@media (prefers-reduced-motion:reduce){*{animation-duration:.001ms!important;transition-duration:.001ms!important}}
+@media (max-width:900px){.kpis{grid-template-columns:repeat(2,1fr)}.grid-2,.grid-3{grid-template-columns:1fr}}
+@media (max-width:640px){.wrap{padding:0 12px 48px}.top-in{padding:12px}.brand p{display:none}}
+
+/* ---------- password gate ---------- */
+#gate{position:fixed;inset:0;z-index:200;background:var(--bg);display:grid;place-items:center;padding:24px}
+#gate .gbox{background:var(--surface);border:1px solid var(--border-strong);border-radius:16px;box-shadow:var(--shadow-lg);width:100%;max-width:360px;padding:28px 26px;text-align:center}
+#gate .gmark{width:46px;height:46px;border-radius:12px;margin:0 auto 14px;background:linear-gradient(145deg,var(--accent),var(--accent-2));color:var(--on-accent);display:grid;place-items:center;font-weight:700;font-family:var(--mono);font-size:16px}
+#gate h1{font-size:17px;margin:0 0 4px}
+#gate p{font-size:12.5px;color:var(--ink-2);margin:0 0 18px}
+#gate input{width:100%;font-family:var(--mono);font-size:16px;letter-spacing:3px;text-align:center;padding:12px;border:1px solid var(--border-strong);border-radius:10px;background:var(--surface-2);color:var(--ink)}
+#gate button{width:100%;margin-top:12px;padding:11px;border:none;border-radius:10px;background:var(--accent);color:var(--on-accent);font-weight:600;font-size:14px;font-family:inherit;cursor:pointer}
+#gate button:hover{background:var(--accent-2)}
+#gate .gerr{color:var(--over);font-size:12px;min-height:16px;margin-top:10px}
+
+</style>
 </head>
 <body>
 <div id="gate">
@@ -33,6 +380,7 @@
       <select class="sel" id="yearSel" aria-label="연도 선택"></select>
       <button class="btn ghost" id="themeBtn" title="테마 전환" aria-label="테마 전환">◐</button>
       <button class="btn ghost" id="pinBtn" hidden>PIN 변경</button>
+      <button class="btn primary" id="seedBtn" hidden>⬇ 초기 데이터 불러오기</button>
       <button class="btn" id="adminBtn">🔒 관리자</button>
     </div>
   </div>
@@ -49,6 +397,828 @@
   <main id="view"></main>
   <p class="footnote" id="foot"></p>
 </div>
-<script type="module" src="/src/main.js"></script>
+<script>
+/* ============================ config ============================ */
+const TODAY = new Date(2026,8,3); // 2026-09-03 (기준일)
+const CUR_YM = ym(TODAY);
+const YEARS = [2026,2025,2024];
+const MONTHS = ["1월","2월","3월","4월","5월","6월","7월","8월","9월","10월","11월","12월"];
+const WD = ["일","월","화","수","목","금","토"];
+
+// 근태 유형 정의 (범례)
+const TYPES = {
+  "O":  {label:"출근",  tk:"O",   cls:"t-work",  leave:0,   grp:"work"},
+  "휴가":{label:"휴가",  tk:"휴",  cls:"t-vac",   leave:1,   grp:"vac"},
+  "오전":{label:"오전반휴",tk:"오전",cls:"t-am",   leave:0.5, grp:"vac"},
+  "오후":{label:"오후반휴",tk:"오후",cls:"t-pm",   leave:0.5, grp:"vac"},
+  "야전":{label:"야전(야간후 오전오프)",tk:"야전",cls:"t-night",leave:0,grp:"night"},
+  "야후":{label:"야후(야간후 오후오프)",tk:"야후",cls:"t-night",leave:0,grp:"night"},
+  "여름":{label:"여름휴가",tk:"여름",cls:"t-summer",leave:1, grp:"vac"},
+  "병가":{label:"병가",  tk:"병",  cls:"t-sick",  leave:0,   grp:"sick"},
+  "재택":{label:"재택",  tk:"재택",cls:"t-home",  leave:0,   grp:"home"},
+  "특근":{label:"특근",  tk:"특",  cls:"t-extra", leave:0,   grp:"extra"},
+  "민방위":{label:"민방위",tk:"민방위",cls:"t-civil",leave:0, grp:"etc"},
+};
+const REG_TYPES=["O","휴가","여름","오전","오후","야전","야후","병가","재택","특근","민방위"];
+function typeInfo(v){ return TYPES[v] || {label:v,tk:v,cls:"t-etc",leave:0,grp:"etc"}; }
+const ANNUAL_QUOTA = 15;
+function lvClass(u){ if(u>ANNUAL_QUOTA)return"lv-over"; if(u>=13)return"lv-caution"; if(u>=10)return"lv-warn"; return"lv-ok"; }
+
+/* ============================ state ============================ */
+const S = {
+  db:null, connected:false,
+  devs:[], meta:{pin:"1004"}, holidays:{},
+  attYear:{},   // key `${devId}__${m}` -> {days} for S.year
+  attMonth:{},  // key devId -> {days} for S.calYm
+  view:"summary", year:2026, calYm:CUR_YM, calDev:null,
+  admin:false, filterDiv:"ALL", search:"", rosterScope:"active",
+  hmScope:"active", hmDiv:"ALL", monthScope:"current",
+  unsubYear:null, unsubMonth:null,
+};
+
+/* ============================ helpers ============================ */
+function ym(d){return d.getFullYear()+"-"+String(d.getMonth()+1).padStart(2,"0");}
+function ymParts(s){const[a,b]=s.split("-");return[+a,+b];}
+function firstOf(y,m){return new Date(y,m-1,1);}
+function lastOf(y,m){return new Date(y,m,0);}
+function pd(s){ if(!s)return null; const[a,b,c]=s.split("-"); return new Date(+a,+b-1,+c); }
+function esc(s){return(s==null?"":String(s)).replace(/[&<>"]/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;"}[c]));}
+function el(id){return document.getElementById(id);}
+
+function isActiveInMonth(dev,y,m){
+  const s=pd(dev.start), e=pd(dev.end);
+  const lo=firstOf(y,m), hi=lastOf(y,m);
+  if(s && s>hi) return false;
+  if(e && e<lo) return false;
+  return true;
+}
+function isCurrent(dev){ if(dev.active===false) return false; const e=pd(dev.end); return !e || e>=TODAY; }
+function isActiveOnDate(dev,d){ const s=pd(dev.start), e=pd(dev.end); if(dev.active===false && !e) return d<=TODAY&&(!s||s<=d); if(s&&d<s)return false; if(e&&d>e)return false; return true; }
+
+// 월 연차 사용량: 일별 등록값(실제) 우선, 과거 월에 기록 없으면 시트 집계값(시드)로 대체
+function monthLeave(dev,y,m){
+  const key=dev.id+"__"+m;
+  const rec = (y===S.year) ? S.attYear[key] : null;
+  if(rec && rec.days){ let t=0; for(const k in rec.days){t+=typeInfo(rec.days[k]).leave;} return {v:t,src:"live"}; }
+  const ymStr=y+"-"+String(m).padStart(2,"0");
+  if(ymStr<CUR_YM){
+    const seed = dev.monthly && dev.monthly[String(y)] && dev.monthly[String(y)][String(m)];
+    if(typeof seed==="number") return {v:seed,src:"seed"};
+    return {v:null,src:"none"};
+  }
+  if(ymStr===CUR_YM) return {v:0,src:"cur"};
+  return {v:null,src:"none"};
+}
+function annualUsed(dev,y){
+  let t=0;
+  for(let m=1;m<=12;m++){ const r=monthLeave(dev,y,m); if(r.v) t+=r.v; }
+  return t;
+}
+function daysBreakdown(days){
+  const b={vac:0,am:0,pm:0,night:0,sick:0,home:0,extra:0,work:0,civil:0,leave:0};
+  for(const k in days){const t=days[k];const ty=typeInfo(t);
+    b.leave+=ty.leave;
+    if(t==="휴가"||t==="여름")b.vac++; else if(t==="오전")b.am++; else if(t==="오후")b.pm++;
+    else if(t==="야전"||t==="야후")b.night++; else if(t==="병가")b.sick++;
+    else if(t==="재택")b.home++; else if(t==="특근")b.extra++; else if(t==="민방위")b.civil++; else if(t==="O")b.work++;
+  }
+  return b;
+}
+function dstr(y,m,day){return y+"-"+String(m).padStart(2,"0")+"-"+String(day).padStart(2,"0");}
+// 특정 날짜의 표기: 기록 우선 → 공휴일 → 상주 평일 자동 'O'
+function dayInfo(dev,y,m,day,days){
+  const rec = days && days[String(day)];
+  if(rec) return {type:rec, auto:false};
+  const d=new Date(y,m-1,day), dow=d.getDay();
+  const inTen = isActiveOnDate(dev,d);
+  const hol = S.holidays[dstr(y,m,day)];
+  if(hol && inTen && dow!==0 && dow!==6) return {holiday:true, name:hol};
+  if(dow===0||dow===6) return null;
+  if(!inTen) return null;
+  if(d>TODAY) return null;
+  return {type:"O", auto:true};
+}
+
+/* ============================ db ============================ */
+async function initDb(){
+  let db=null;
+  try{ db = await claude.use("db"); }catch(e){ db=null; }
+  S.db=db;
+  if(!db){ S.connected=false; setConn("off","오프라인 (저장 불가)"); render(); return; }
+  S.connected=true; setConn("live","실시간 연결됨");
+  // meta
+  try{ const ms=await db.doc("meta/config").get(); if(ms.exists&&ms.data().pin) S.meta.pin=ms.data().pin; }catch(e){}
+  // holidays (master, shared)
+  db.doc("meta/holidays").onSnapshot(s=>{ S.holidays=(s.exists&&s.data().dates)||{}; render(); }, ()=>{});
+  // developers
+  db.collection("developers").onSnapshot(snap=>{
+    S.devs = snap.docs.map(d=>d.data()).sort((a,b)=>(a.order||0)-(b.order||0));
+    el("nRoster").textContent = S.devs.length? S.devs.length : "";
+    render();
+  }, err=>{ setConn("off","동기화 오류"); });
+  subYear(); subMonth();
+}
+function subYear(){
+  if(!S.db)return; if(S.unsubYear)S.unsubYear();
+  S.attYear={};
+  S.unsubYear = S.db.collection("attendance").where("year","==",S.year).onSnapshot(snap=>{
+    const map={}; snap.docs.forEach(d=>{const v=d.data(); map[v.devId+"__"+v.month]=v;}); S.attYear=map;
+    if(S.view==="heatmap"||S.view==="summary") render();
+  }, ()=>{});
+}
+function subMonth(){
+  if(!S.db)return; if(S.unsubMonth)S.unsubMonth();
+  S.attMonth={};
+  S.unsubMonth = S.db.collection("attendance").where("ym","==",S.calYm).onSnapshot(snap=>{
+    const map={}; snap.docs.forEach(d=>{const v=d.data(); map[v.devId]=v;}); S.attMonth=map;
+    if(S.view==="calendar") render();
+  }, ()=>{});
+}
+async function writeDay(dev,day,type){
+  if(!S.db) return;
+  const [y,m]=ymParts(S.calYm);
+  const ref=S.db.doc("attendance/"+dev.id+"__"+S.calYm);
+  let days={};
+  const cur=S.attMonth[dev.id];
+  if(cur&&cur.days) days={...cur.days};
+  if(type===null) delete days[String(day)]; else days[String(day)]=type;
+  try{ await ref.set({devId:dev.id, ym:S.calYm, year:y, month:m, days}); }
+  catch(e){ alert("저장 실패: "+(e&&e.message||e)); }
+}
+function setConn(st,txt){ const d=el("dot"); d.className="dot "+(st==="live"?"live":st==="off"?"off":""); el("connlab").textContent=txt; }
+
+/* ============================ render dispatch ============================ */
+function render(){
+  el("tabs").querySelectorAll(".tab").forEach(t=>t.classList.toggle("on",t.dataset.tab===S.view));
+  el("adminBtn").className="btn"+(S.admin?" on":"");
+  el("adminBtn").textContent=(S.admin?"🔓 관리자 ON":"🔒 관리자");
+  el("pinBtn").hidden = !S.admin;
+  const sb=el("seedBtn"); if(sb) sb.hidden = !(S.admin && S.connected && S.devs.length===0 && window.__SEED);
+  const v=el("view");
+  if(!S.devs.length){
+    if(!S.connected && S.db===null){ v.innerHTML=emptyState("오프라인","저장 기능(db)에 연결할 수 없어 데이터를 표시할 수 없어요. 게시된 아티팩트 화면에서 열면 연결됩니다."); return; }
+    v.innerHTML=loadingState(); return;
+  }
+  if(S.view==="summary") v.innerHTML=viewSummary();
+  else if(S.view==="roster") v.innerHTML=viewRoster();
+  else if(S.view==="heatmap") v.innerHTML=viewHeatmap();
+  else if(S.view==="month") v.innerHTML=viewMonth();
+  else if(S.view==="calendar") v.innerHTML=viewCalendar();
+  el("foot").innerHTML = footNote();
+}
+function footNote(){
+  return `기준일 <b class="mono">2026-09-03</b> · 연차 기준 <b class="mono">${ANNUAL_QUOTA}일/년</b> (휴가 1.0, 오전·오후 반휴 0.5 합산) · `+
+    `과거 월은 잠금 상태이며 관리자 PIN 입력 시에만 수정할 수 있습니다. 월별·누계 수치는 일별 등록 실제값 기준이며, 과거 월에 일별기록이 없을 때만 시트 집계값을 사용합니다.`;
+}
+function loadingState(){ let r=""; for(let i=0;i<5;i++) r+=`<div class="skel" style="height:52px;margin-bottom:10px"></div>`; return `<div class="panel"><div class="panel-bd">${r}</div></div>`; }
+function emptyState(t,d){ return `<div class="empty-state"><div class="es-t">${esc(t)}</div><div>${esc(d)}</div></div>`; }
+
+/* ============================ view: summary ============================ */
+function viewSummary(){
+  const total=S.devs.length;
+  const cur=S.devs.filter(isCurrent);
+  const curN=cur.length;
+  // 이번 달 등록 건수
+  let regCnt=0; for(const id in S.attMonth){const d=S.attMonth[id]; if(d.days)regCnt+=Object.keys(d.days).length;}
+  // 올해 연차: 현재 상주자 평균
+  const curYearUsers=cur.filter(d=>isActiveInMonth(d,S.year,1)||true);
+  let sum=0,cnt=0; cur.forEach(d=>{const u=annualUsed(d,S.year); if(u>0){sum+=u;cnt++;}});
+  const avg = cnt? (sum/cnt) : 0;
+  const over = cur.filter(d=>annualUsed(d,S.year)>ANNUAL_QUOTA).length;
+
+  const byRole=groupCount(cur,"role"), byCo=groupCount(cur,"company");
+  // 월별 연차 추이 (상주 인력 합, 선택연도)
+  const trend=[]; let tmax=0;
+  for(let m=1;m<=12;m++){ let t=0; cur.forEach(d=>{const r=monthLeave(d,S.year,m); if(r.v)t+=r.v;}); trend.push(t); if(t>tmax)tmax=t; }
+
+  return `
+  <div class="kpis">
+    <div class="kpi"><div class="lab">총 등록 인원</div><div class="val mono">${total}<small>명</small></div><div class="sub">퇴사·철수 이력 포함 누적</div></div>
+    <div class="kpi"><div class="lab"><span class="dot live" style="box-shadow:none;width:7px;height:7px"></span>현재 상주 인원</div><div class="val mono">${curN}<small>명</small></div><div class="sub">상주 종료일 미도래 기준</div></div>
+    <div class="kpi"><div class="lab">${S.year} 평균 연차 사용</div><div class="val mono">${avg.toFixed(1)}<small>/ ${ANNUAL_QUOTA}일</small></div><div class="sub">상주자 중 사용 인원 ${cnt}명 평균</div></div>
+    <div class="kpi"><div class="lab">연차 초과 인원</div><div class="val mono" style="color:${over?'var(--over)':'var(--ink)'}">${over}<small>명</small></div><div class="sub">${S.year} 기준 15일 초과</div></div>
+  </div>
+
+  <div class="panel">
+    <div class="panel-hd"><h2>${S.year} 월별 연차 사용 추이</h2><span class="desc">상주 인력 합계 · 단위 일</span></div>
+    <div class="panel-bd">
+      <div class="trend">
+        ${trend.map((t,i)=>{const h=tmax?Math.max(3,Math.round(t/tmax*96)):3;
+          return `<div class="tcol"><div class="tbar" style="height:${h}px">${t?`<b>${t%1?t.toFixed(1):t}</b>`:""}</div><div class="tm">${i+1}</div></div>`;}).join("")}
+      </div>
+    </div>
+  </div>
+
+  <div class="panel">
+    <div class="panel-hd"><h2>상주 인원 분포</h2><span class="desc">역할별 · 협력사별</span></div>
+    <div class="panel-bd"><div class="dist2">
+      <div><div class="dist-t">역할별</div>${barsHtml(byRole)}</div>
+      <div><div class="dist-t">협력사별</div>${barsHtml(byCo)}</div>
+    </div></div>
+  </div>`;
+}
+function groupCount(list,key){
+  const m={}; list.forEach(d=>{const k=d[key]||"미지정"; m[k]=(m[k]||0)+1;});
+  return Object.entries(m).sort((a,b)=>b[1]-a[1]);
+}
+function barsHtml(rows){
+  const max=Math.max(1,...rows.map(r=>r[1]));
+  return `<div class="barc">${rows.map(([k,v])=>`
+    <div class="barrow"><div class="bl" title="${esc(k)}">${esc(k)}</div>
+    <div class="bartrk"><div class="barfill" style="width:${Math.round(v/max*100)}%"></div></div>
+    <div class="bv">${v}</div></div>`).join("")}</div>`;
+}
+
+/* ============================ view: roster ============================ */
+function viewRoster(){
+  let list=S.devs.slice();
+  if(S.rosterScope==="active") list=list.filter(isCurrent);
+  if(S.search){const q=S.search.toLowerCase();
+    list=list.filter(d=>(d.name+d.role+d.company+d.title+(d.email||"")).toLowerCase().includes(q));}
+  const adm=S.admin;
+  const colspan = adm?12:11;
+  const rows=list.map(d=>{
+    const on=isCurrent(d);
+    return `<tr class="${on?"":"inactive"}">
+      <td class="nm">${esc(d.name)} <span class="muted" style="font-weight:400">${esc(d.title||"")}</span></td>
+      <td>${esc(d.role)}</td>
+      <td>${esc(d.company||"-")}</td>
+      <td class="mono">${d.phone?esc(d.phone):'<span class="muted">-</span>'}</td>
+      <td>${d.email?`<a class="mail" href="mailto:${esc(d.email)}">${esc(d.email)}</a>`:'<span class="muted">-</span>'}</td>
+      <td>${d.personalEmail?`<a class="mail" href="mailto:${esc(d.personalEmail)}">${esc(d.personalEmail)}</a>`:'<span class="muted">-</span>'}</td>
+      <td class="mono">${esc(d.start||"-")}</td>
+      <td class="mono">${d.end?esc(d.end):(on?'<span class="chip on-badge dot" style="font-family:var(--sans)">상주중</span>':'<span class="muted">철수</span>')}</td>
+      <td>${esc(d.dur||"-")}</td>
+      <td>${on?'<span class="chip on-badge dot">활성</span>':'<span class="chip off-badge">'+(d.note==="퇴사"?"퇴사":"철수")+'</span>'}</td>
+      <td class="muted">${esc(d.note||d.sub&&("대체: "+d.sub)||"")}</td>
+      ${adm?`<td style="white-space:nowrap"><button class="ic-btn" data-editdev="${d.id}" title="수정">✎</button><button class="ic-btn danger" data-deldev="${d.id}" title="삭제">🗑</button></td>`:""}
+    </tr>`;}).join("");
+  return `
+  <div class="panel">
+    <div class="panel-hd">
+      <h2>개발자 명단 · 연락처</h2>
+      <div class="sp"></div>
+      <div class="filters">
+        ${adm?`<button class="btn primary" data-adddev="1">+ 개발자 추가</button>`:""}
+        <div class="seg" data-role="scope">
+          <button data-scope="active" class="${S.rosterScope==="active"?"on":""}">상주중</button>
+          <button data-scope="all" class="${S.rosterScope==="all"?"on":""}">전체</button>
+        </div>
+        <div class="search"><svg width="14" height="14" viewBox="0 0 14 14" fill="none"><circle cx="6" cy="6" r="4.5" stroke="currentColor" stroke-width="1.4"/><path d="M9.5 9.5L13 13" stroke="currentColor" stroke-width="1.4" stroke-linecap="round"/></svg>
+          <input type="search" data-role="search" placeholder="이름·역할·협력사 검색" value="${esc(S.search)}"></div>
+      </div>
+    </div>
+    <div class="tbl-scroll"><table>
+      <thead><tr><th>성명</th><th>역할</th><th>소속</th><th>휴대폰</th><th>회사이메일</th><th>개인이메일</th><th>상주 시작</th><th>상주 종료</th><th>상주기간</th><th>상태</th><th>비고</th>${adm?"<th>관리</th>":""}</tr></thead>
+      <tbody>${rows||`<tr><td colspan="${colspan}" class="empty-state">조건에 맞는 인원이 없습니다.</td></tr>`}</tbody>
+    </table></div>
+    <div class="panel-bd" style="border-top:1px solid var(--border);padding-top:12px;display:flex;align-items:center;gap:12px">
+      <div class="muted" style="font-size:12px">표시 ${list.length}명 · 전체 ${S.devs.length}명 · 현재 상주 ${S.devs.filter(isCurrent).length}명</div>
+      ${adm?"":`<div class="muted" style="font-size:11.5px;margin-left:auto">개발자 추가·수정·삭제는 상단 <b>관리자</b> 인증 후 가능합니다.</div>`}
+    </div>
+  </div>`;
+}
+
+/* ============================ view: heatmap ============================ */
+function viewHeatmap(){
+  let list=S.devs.slice();
+  if(S.hmScope==="active") list=list.filter(isCurrent);
+  const rows=list.map(d=>{
+    let cells="";
+    for(let m=1;m<=12;m++){
+      const ymc=S.year+"-"+String(m).padStart(2,"0");
+      if(!isActiveInMonth(d,S.year,m)){ cells+=`<td class="cell idle"></td>`; continue; }
+      const r=monthLeave(d,S.year,m); const v=r.v;
+      const clk=`data-hmcell="${d.id}" data-hmym="${ymc}"`;
+      if(v==null){ cells+=`<td class="cell z hmk" ${clk} title="${MONTHS[m-1]} · 달력 열기">·</td>`; }
+      else{ cells+=`<td class="cell hmk${v?"":" z"}" ${clk} title="${MONTHS[m-1]} ${v}일 · 클릭하면 달력 열기">${v?(v%1?v.toFixed(1):v):"0"}</td>`; }
+    }
+    const u=annualUsed(d,S.year); const cls=lvClass(u);
+    return `<tr>
+      <th class="rh"><div class="rn">${esc(d.name)}${isCurrent(d)?"":' <span class="muted" style="font-weight:400;font-size:10px">·종료</span>'}</div><div class="rr">${esc(d.role)} · ${esc(d.company||"-")}</div></th>
+      ${cells}
+      <td class="cum ${cls}"><span class="cv">${u%1?u.toFixed(1):u}</span> <span class="cx">/${ANNUAL_QUOTA}</span></td>
+    </tr>`;}).join("");
+  return `
+  <div class="panel">
+    <div class="panel-hd">
+      <h2>${S.year} 연차·투입 현황</h2>
+      <span class="desc">셀=월 연차 사용일 · <span class="cell idle" style="display:inline-block;width:20px;border:none;padding:2px 6px;border-radius:4px"></span> 미투입</span>
+      <div class="sp"></div>
+      <div class="filters">
+        <div class="seg" data-role="hmscope">
+          <button data-hmscope="active" class="${S.hmScope==="active"?"on":""}">상주중</button>
+          <button data-hmscope="all" class="${S.hmScope==="all"?"on":""}">전체</button>
+        </div>
+      </div>
+    </div>
+    <div class="panel-bd" style="padding-bottom:12px">
+      <div class="lvlegend">
+        <b style="color:var(--ink-2)">연차 누계</b>
+        <span><i class="sw" style="background:var(--ok-bg);border-color:var(--ok)"></i> 여유 &lt;10</span>
+        <span><i class="sw" style="background:var(--warn-bg);border-color:var(--warn)"></i> 주의 10~12</span>
+        <span><i class="sw" style="background:var(--caution-bg);border-color:var(--caution)"></i> 경고 13~15</span>
+        <span><i class="sw" style="background:var(--over-bg);border-color:var(--over)"></i> 초과 &gt;15</span>
+      </div>
+    </div>
+    <div class="hm-scroll"><table class="hm">
+      <thead><tr><th class="rh">개발자</th>${MONTHS.map(m=>`<th class="mh">${m.replace("월","")}</th>`).join("")}<th class="cum-h">연차 누계</th></tr></thead>
+      <tbody>${rows||`<tr><td colspan="14" class="empty-state">해당 인원이 없습니다.</td></tr>`}</tbody>
+    </table></div>
+  </div>`;
+}
+
+/* ============================ view: calendar ============================ */
+function viewCalendar(){
+  const [y,m]=ymParts(S.calYm);
+  const locked = S.calYm<CUR_YM;
+  const editable = (!locked || S.admin);
+  // dev select: 상주중 인력만 (철수·종료 제외). 히트맵에서 이동한 대상은 예외 포함
+  let base=S.devs.filter(isCurrent);
+  if(S.calDev && !base.some(d=>d.id===S.calDev)){ const cd=S.devs.find(d=>d.id===S.calDev); if(cd) base=[cd,...base]; }
+  const opts=base.map(d=>({d,act:isActiveInMonth(d,y,m)})).sort((a,b)=>(b.act-a.act)||(a.d.order-b.d.order));
+  if((!S.calDev || !base.some(d=>d.id===S.calDev)) && opts.length) S.calDev=(opts.find(o=>o.act)||opts[0]).d.id;
+  const dev=S.devs.find(d=>d.id===S.calDev);
+  const devActive = dev? isActiveInMonth(dev,y,m):false;
+  const canEdit = editable && devActive && S.connected;
+  const rec = dev? S.attMonth[dev.id]:null;
+  const days = rec&&rec.days? rec.days:{};
+
+  // build calendar grid
+  const first=firstOf(y,m), start=first.getDay(), dim=lastOf(y,m).getDate();
+  let cells="";
+  for(let i=0;i<start;i++) cells+=`<div class="day empty"></div>`;
+  for(let dd=1;dd<=dim;dd++){
+    const dcell=new Date(y,m-1,dd), dow=dcell.getDay();
+    const isToday = (y===TODAY.getFullYear()&&m===TODAY.getMonth()+1&&dd===TODAY.getDate());
+    const inTen = dev?isActiveOnDate(dev,dcell):false;
+    const info=dayInfo(dev,y,m,dd,days);
+    let mk="";
+    if(info){ if(info.holiday){ mk=`<div class="mk hol" title="${esc(info.name)}">${esc(info.name)}</div>`; }
+      else { const ty=typeInfo(info.type); mk=`<div class="mk ${ty.cls}${info.auto?" auto":""}${ty.tk.length>2?" small":""}">${esc(ty.tk==="O"?"ㅇ":ty.tk)}</div>`; } }
+    const cellEdit=canEdit&&inTen;
+    const cl=["day",dow===0?"sun":dow===6?"sat":"",isToday?"today":"",(!inTen)?"inact":"",cellEdit?"clk":"ro"].filter(Boolean).join(" ");
+    cells+=`<div class="${cl}" ${cellEdit?`data-day="${dd}"`:""}><div class="dn">${dd}</div>${mk}</div>`;
+  }
+  const b=daysBreakdown(days);
+  const monthU=dev?(monthLeave(dev,y,m).v||0):0;
+  const annU=dev?annualUsed(dev,y):0;
+  const acol=annU>ANNUAL_QUOTA?'var(--over)':annU>=13?'var(--caution)':annU>=10?'var(--warn)':'var(--ok)';
+  const brkRow=(cls,label,val)=>`<div class="r"><span class="k"><i class="tag ${cls}"></i>${label}</span><span class="v">${val}</span></div>`;
+
+  return `
+  <div class="panel">
+    <div class="panel-hd">
+      <div class="caltop">
+        <div class="mnav big">
+          <button data-mnav="-1" aria-label="이전 달">‹</button>
+          <span class="mlab">${y}.${String(m).padStart(2,"0")}</span>
+          <button data-mnav="1" aria-label="다음 달">›</button>
+        </div>
+        <select class="sel" data-role="caldev" style="min-width:200px;font-size:13.5px">
+          ${opts.map(o=>`<option value="${o.d.id}"${o.d.id===S.calDev?" selected":""}>${esc(o.d.name)} · ${esc(o.d.role)}${o.act?"":" (미투입)"}</option>`).join("")}
+        </select>
+        ${locked?`<span class="lockpill locked">🔒 마감된 월${S.admin?" · 관리자 수정가능":""}</span>`:`<span class="lockpill openm">✎ 등록 가능</span>`}
+        ${S.admin?`<button class="btn" data-holiday="1" style="margin-left:auto">📅 공휴일 관리</button>`:""}
+      </div>
+    </div>
+    <div class="panel-bd">
+      <div class="grid-2" style="grid-template-columns:1fr 260px;gap:24px">
+        <div>
+          <div class="cal">
+            ${WD.map((w,i)=>`<div class="wd ${i===0?"sun":i===6?"sat":""}">${w}</div>`).join("")}
+            ${cells}
+          </div>
+          ${canEdit?`<p class="footnote">날짜 칸을 클릭해 근태 유형을 등록/변경하세요. 빈 평일은 자동으로 <b>ㅇ(출근)</b>으로 표시됩니다. 저장은 실시간 공유됩니다.</p>`:
+            locked&&!S.admin?`<p class="footnote">⚠ 마감된 월입니다. 수정하려면 상단 <b>관리자</b> 버튼으로 PIN을 입력하세요.</p>`:
+            !devActive?`<p class="footnote">해당 개발자는 이 달에 미투입 상태입니다.</p>`:
+            !S.connected?`<p class="footnote">오프라인 상태로 등록할 수 없습니다.</p>`:""}
+        </div>
+        <div class="calside">
+          <div class="calsum">
+            <div class="lab" style="font-size:11.5px;color:var(--ink-2);font-weight:500;margin-bottom:8px">${esc(dev?dev.name:"-")} · ${y}.${String(m).padStart(2,"0")}</div>
+            <div class="big mono">${monthU%1?monthU.toFixed(1):monthU}<small> 연차일</small></div>
+            <div class="brk">
+              ${brkRow("t-vac","휴가·여름",b.vac+"일")}
+              ${brkRow("t-am","오전반휴",b.am+"회")}
+              ${brkRow("t-pm","오후반휴",b.pm+"회")}
+              ${brkRow("t-night","야전·야후",b.night+"회")}
+              ${brkRow("t-sick","병가",b.sick+"일")}
+              ${brkRow("t-home","재택",b.home+"일")}
+              ${brkRow("t-extra","특근",b.extra+"일")}
+            </div>
+          </div>
+          <div class="calsum">
+            <div class="lab" style="font-size:11.5px;color:var(--ink-2);font-weight:500;margin-bottom:8px">${y} 연차 누계</div>
+            <div class="big mono" style="color:${acol}">${annU%1?annU.toFixed(1):annU}<small> / ${ANNUAL_QUOTA}일</small></div>
+            <div class="bartrk" style="margin-top:12px;height:8px"><div class="barfill" style="width:${Math.min(100,Math.round(annU/ANNUAL_QUOTA*100))}%;background:${acol}"></div></div>
+            <div class="footnote" style="margin-top:8px">잔여 ${Math.max(0,ANNUAL_QUOTA-annU).toFixed(annU%1?1:0)}일</div>
+          </div>
+        </div>
+      </div>
+      <div class="legend-br full">${legendHtml()}</div>
+    </div>
+  </div>`;
+}
+function legendHtml(){
+  return `<div class="tlegend">${REG_TYPES.map(k=>{const t=typeInfo(k);
+    return `<span class="tl"><span class="tk ${t.cls}">${esc(t.tk==="O"?"ㅇ":t.tk)}</span>${esc(t.label.split("(")[0])}</span>`;}).join("")}</div>`;
+}
+
+/* ============================ view: month (전체 종합) ============================ */
+function viewMonth(){
+  const [y,m]=ymParts(S.calYm);
+  const locked=S.calYm<CUR_YM; const editable=(!locked||S.admin);
+  const dim=lastOf(y,m).getDate();
+  let list=S.devs.filter(d=>isActiveInMonth(d,y,m));
+  if(S.monthScope==="current") list=list.filter(isCurrent);
+  list.sort((a,b)=>a.order-b.order);
+  const headDays=[];
+  for(let dd=1;dd<=dim;dd++){ const dow=new Date(y,m-1,dd).getDay(); headDays.push({dd,dow,
+    today:(y===TODAY.getFullYear()&&m===TODAY.getMonth()+1&&dd===TODAY.getDate())}); }
+  const rows=list.map(d=>{
+    const rec=S.attMonth[d.id]; const days=rec&&rec.days?rec.days:{};
+    const canEdit = editable && S.connected;
+    let cs="";
+    for(const h of headDays){
+      const dcell=new Date(y,m-1,h.dd); const inTen=isActiveOnDate(d,dcell);
+      const info=dayInfo(d,y,m,h.dd,days);
+      let mk="";
+      if(info){ if(info.holiday){ mk=`<span class="mm hol" title="${esc(info.name)}">휴</span>`; }
+        else { const ty=typeInfo(info.type); mk=`<span class="mm ${ty.cls}${info.auto?" auto":""}">${esc(ty.tk==="O"?"ㅇ":(ty.tk.length>2?ty.tk.slice(0,2):ty.tk))}</span>`; } }
+      const wk=h.dow===0||h.dow===6; const cellEdit=canEdit&&inTen;
+      cs+=`<td class="mc${wk?" wke":""}${h.today?" tdy":""}${!inTen?" inact":""}" ${cellEdit?`data-mday="${h.dd}" data-mdev="${d.id}"`:""}>${mk}</td>`;
+    }
+    const u=monthLeave(d,y,m).v||0;
+    return `<tr><th class="rh"><div class="rn">${esc(d.name)}</div><div class="rr">${esc(d.role)} · ${esc(d.company||"-")}</div></th>${cs}<td class="mtot mono">${u%1?u.toFixed(1):u}</td></tr>`;
+  }).join("");
+  return `
+  <div class="panel">
+    <div class="panel-hd">
+      <div class="caltop">
+        <div class="mnav big">
+          <button data-mnav="-1" aria-label="이전 달">‹</button>
+          <span class="mlab">${y}.${String(m).padStart(2,"0")}</span>
+          <button data-mnav="1" aria-label="다음 달">›</button>
+        </div>
+        <h2 style="margin:0 4px">월 근태 종합</h2>
+        <div class="seg" data-role="mscope">
+          <button data-mscope="current" class="${S.monthScope!=="all"?"on":""}">상주중</button>
+          <button data-mscope="all" class="${S.monthScope==="all"?"on":""}">해당월 전체</button>
+        </div>
+        ${locked?`<span class="lockpill locked">🔒 마감된 월${S.admin?" · 수정가능":""}</span>`:`<span class="lockpill openm">✎ 등록 가능</span>`}
+        ${S.admin?`<button class="btn" data-holiday="1" style="margin-left:auto">📅 공휴일 관리</button>`:""}
+      </div>
+    </div>
+    <div class="hm-scroll"><table class="hm mgrid">
+      <thead>
+        <tr><th class="rh">개발자 (${list.length})</th>${headDays.map(h=>`<th class="md${h.dow===0?" sun":h.dow===6?" sat":""}${h.today?" tdy":""}">${h.dd}</th>`).join("")}<th class="cum-h">연차</th></tr>
+        <tr><th class="rh sub"></th>${headDays.map(h=>`<th class="mdw${h.dow===0?" sun":h.dow===6?" sat":""}">${WD[h.dow]}</th>`).join("")}<th class="cum-h sub"></th></tr>
+      </thead>
+      <tbody>${rows||`<tr><td colspan="${dim+2}" class="empty-state">해당 월 상주 인원이 없습니다.</td></tr>`}</tbody>
+    </table></div>
+    <div class="panel-bd">
+      <p class="footnote" style="margin:0 0 4px">${editable&&S.connected?"칸을 클릭해 해당 인력의 근태를 바로 등록/변경할 수 있어요. 빈 평일은 자동으로 ㅇ(출근), 미투입 기간은 빗금으로 표시됩니다.":"마감된 월은 관리자 인증 후 수정할 수 있어요."}</p>
+      <div class="legend-br full">${legendHtml()}</div>
+    </div>
+  </div>`;
+}
+
+/* ============================ popover (day register) ============================ */
+let POP=null;
+function openPop(dayEl, devId, day){
+  closePop();
+  const dev=S.devs.find(d=>d.id===(devId||S.calDev)); if(!dev)return;
+  if(day==null) day=+dayEl.dataset.day;
+  const cur=(S.attMonth[dev.id]&&S.attMonth[dev.id].days||{})[String(day)];
+  const p=document.createElement("div"); p.className="pop";
+  p.innerHTML=`<div class="ph">${esc(dev.name)} · ${S.calYm.replace("-",".")}.${String(day).padStart(2,"0")} 근태 선택</div>
+    <div class="pg">
+      ${REG_TYPES.map(k=>{const t=typeInfo(k);return `<button class="pt" data-type="${esc(k)}" style="${cur===k?"border-color:var(--accent);background:var(--surface-2)":""}"><span class="tk ${t.cls}">${esc(t.tk==="O"?"ㅇ":t.tk)}</span>${esc(t.label.split("(")[0])}</button>`;}).join("")}
+      <button class="pt clr" data-type="__clear">지우기</button>
+    </div>`;
+  document.body.appendChild(p);
+  const r=dayEl.getBoundingClientRect();
+  let left=r.left, top=r.bottom+6;
+  const pw=216, ph=p.offsetHeight;
+  if(left+pw>window.innerWidth-10) left=window.innerWidth-pw-10;
+  if(top+ph>window.innerHeight-10) top=r.top-ph-6;
+  p.style.left=Math.max(10,left)+"px"; p.style.top=Math.max(10,top)+"px";
+  p.addEventListener("click",async e=>{
+    const b=e.target.closest("button.pt"); if(!b)return;
+    const t=b.dataset.type; closePop();
+    await writeDay(dev,day,t==="__clear"?null:t);
+  });
+  POP=p;
+  setTimeout(()=>document.addEventListener("mousedown",outPop),0);
+}
+function outPop(e){ if(POP&&!POP.contains(e.target)) closePop(); }
+function closePop(){ if(POP){POP.remove();POP=null;document.removeEventListener("mousedown",outPop);} }
+
+/* ============================ admin modal ============================ */
+function openAdmin(){
+  if(S.admin){ S.admin=false; render(); return; }
+  const bg=document.createElement("div"); bg.className="modal-bg";
+  bg.innerHTML=`<div class="modal">
+    <h3>관리자 인증</h3>
+    <p>마감된 과거 월의 근태를 수정·삭제하려면 관리자 PIN을 입력하세요. 세션 동안만 유지되며 새로고침하면 해제됩니다.</p>
+    <input type="password" inputmode="numeric" id="pinInput" maxlength="8" placeholder="••••" autocomplete="off">
+    <div class="err" id="pinErr"></div>
+    <div class="mrow">
+      <button class="btn" data-act="cancel">취소</button>
+      <button class="btn primary" data-act="ok">인증</button>
+    </div>
+    <p class="footnote" style="margin-top:14px">관리자 PIN은 아티팩트 데이터에 저장되어 있으며, 인증 후 <b>PIN 변경</b>도 가능합니다.</p>
+  </div>`;
+  document.body.appendChild(bg);
+  const input=bg.querySelector("#pinInput"); input.focus();
+  const submit=()=>{
+    if(input.value===String(S.meta.pin)){ S.admin=true; bg.remove(); render(); }
+    else { bg.querySelector("#pinErr").textContent="PIN이 일치하지 않습니다."; input.value=""; input.focus(); }
+  };
+  bg.addEventListener("click",e=>{
+    if(e.target===bg){bg.remove();return;}
+    const a=e.target.closest("button"); if(!a)return;
+    if(a.dataset.act==="cancel")bg.remove(); else if(a.dataset.act==="ok")submit();
+  });
+  input.addEventListener("keydown",e=>{if(e.key==="Enter")submit();});
+}
+function openChangePin(){
+  const bg=document.createElement("div"); bg.className="modal-bg";
+  bg.innerHTML=`<div class="modal">
+    <h3>관리자 PIN 변경</h3>
+    <p>새 PIN을 입력하세요. 4자리 이상 숫자를 권장합니다. 변경 즉시 아티팩트 데이터에 저장되어 모든 사용자에게 적용됩니다.</p>
+    <input type="password" inputmode="numeric" id="npin" maxlength="8" placeholder="새 PIN" autocomplete="off">
+    <div class="err" id="npErr"></div>
+    <div class="mrow">
+      <button class="btn" data-act="cancel">취소</button>
+      <button class="btn primary" data-act="ok">저장</button>
+    </div>
+  </div>`;
+  document.body.appendChild(bg);
+  const input=bg.querySelector("#npin"); input.focus();
+  const save=async()=>{
+    const v=input.value.trim();
+    if(v.length<4){ bg.querySelector("#npErr").textContent="4자리 이상 입력하세요."; return; }
+    try{ if(S.db) await S.db.doc("meta/config").set({pin:v}); S.meta.pin=v; bg.remove(); }
+    catch(e){ bg.querySelector("#npErr").textContent="저장 실패: "+(e&&e.message||e); }
+  };
+  bg.addEventListener("click",e=>{
+    if(e.target===bg){bg.remove();return;}
+    const a=e.target.closest("button"); if(!a)return;
+    if(a.dataset.act==="cancel")bg.remove(); else if(a.dataset.act==="ok")save();
+  });
+  input.addEventListener("keydown",e=>{if(e.key==="Enter")save();});
+}
+
+/* ============================ holiday manager ============================ */
+function openHolidayMgr(){
+  const render=()=>{
+    const ds=Object.keys(S.holidays).sort();
+    return `<div class="modal wide">
+      <h3>공휴일 관리</h3>
+      <p>등록한 공휴일은 <b>마스터에 저장되어 모든 개발자 달력에 공통</b>으로 표시되고, 해당일은 자동 출근(ㅇ) 표기에서 제외됩니다.</p>
+      <div class="fgrid" style="grid-template-columns:150px 1fr auto;align-items:end">
+        <div class="fld"><label>날짜</label><input id="h_date" type="date" class="mono" value="${CUR_YM}-01"></div>
+        <div class="fld"><label>공휴일명</label><input id="h_name" placeholder="예: 추석연휴"></div>
+        <button class="btn primary" data-hadd="1" style="padding:9px 14px">추가</button>
+      </div>
+      <div class="err" id="h_err"></div>
+      <div class="hol-list">
+        ${ds.length?ds.map(d=>`<div class="hol-row"><span class="mono">${esc(d)}</span><span class="hn">${esc(S.holidays[d])}</span><button class="ic-btn danger" data-hdel="${esc(d)}">🗑</button></div>`).join(""):'<div class="muted" style="padding:12px">등록된 공휴일이 없습니다.</div>'}
+      </div>
+      <div class="mrow"><button class="btn" data-act="close">닫기</button></div>
+    </div>`;
+  };
+  const bg=document.createElement("div"); bg.className="modal-bg";
+  bg.innerHTML=render(); document.body.appendChild(bg);
+  const redraw=()=>{ bg.innerHTML=render(); };
+  const save=async(obj)=>{ try{ if(S.db) await S.db.doc("meta/holidays").set({dates:obj}); S.holidays=obj; }catch(e){ const el2=bg.querySelector("#h_err"); if(el2)el2.textContent="저장 실패: "+(e&&e.message||e);} };
+  bg.addEventListener("click",async e=>{
+    if(e.target===bg){bg.remove();return;}
+    const a=e.target.closest("button"); if(!a)return;
+    if(a.dataset.act==="close"){bg.remove();return;}
+    if(a.dataset.hadd!=null){ const dt=bg.querySelector("#h_date").value; const nm=bg.querySelector("#h_name").value.trim();
+      if(!dt||!nm){bg.querySelector("#h_err").textContent="날짜와 이름을 입력하세요.";return;}
+      await save({...S.holidays,[dt]:nm}); redraw(); return; }
+    if(a.dataset.hdel){ const o={...S.holidays}; delete o[a.dataset.hdel]; await save(o); redraw(); return; }
+  });
+}
+
+/* ============================ developer add/edit/delete ============================ */
+function selField(id,label,opts,cur){
+  cur=cur||""; const has=opts.includes(cur); const custom=(!has&&cur!=="");
+  return `<div class="fld"><label>${esc(label)}</label>
+    <select id="${id}" data-selcustom>
+      <option value=""${cur===""?" selected":""}>선택…</option>
+      ${opts.map(o=>`<option value="${esc(o)}"${o===cur?" selected":""}>${esc(o)}</option>`).join("")}
+      <option value="__c"${custom?" selected":""}>+ 직접 입력</option>
+    </select>
+    <input id="${id}_c" class="cinp" placeholder="직접 입력" value="${custom?esc(cur):""}" ${custom?"":"hidden"}></div>`;
+}
+function selVal(bg,id){const s=bg.querySelector("#"+id);return s.value==="__c"?bg.querySelector("#"+id+"_c").value.trim():s.value;}
+function openDevForm(devId){
+  const d = devId? S.devs.find(x=>x.id===devId) : null;
+  const roles=[...new Set(S.devs.map(x=>x.role))].filter(Boolean);
+  const cos=[...new Set(S.devs.map(x=>x.company))].filter(Boolean);
+  const f=(v)=>esc(v||"");
+  const bg=document.createElement("div"); bg.className="modal-bg";
+  bg.innerHTML=`<div class="modal wide">
+    <h3>${d?"개발자 수정":"개발자 추가"}</h3>
+    <div class="fgrid">
+      <div class="fld"><label>성명 *</label><input id="f_name" value="${f(d&&d.name)}"></div>
+      <div class="fld"><label>직함</label><input id="f_title" value="${f(d&&d.title)}" placeholder="예: 부장"></div>
+      ${selField("f_role","역할",roles,d&&d.role)}
+      ${selField("f_company","소속(협력사)",cos,d&&d.company)}
+      <div class="fld"><label>휴대폰</label><input id="f_phone" class="mono" value="${f(d&&d.phone)}" placeholder="010-0000-0000"></div>
+      <div class="fld"><label>회사 이메일</label><input id="f_email" value="${f(d&&d.email)}" placeholder="id@bkrpartner.co.kr"></div>
+      <div class="fld"><label>개인 이메일 (Gmail)</label><input id="f_pemail" value="${f(d&&d.personalEmail)}" placeholder="id@gmail.com"></div>
+      <div class="fld"><label>대체자</label><input id="f_sub" value="${f(d&&d.sub)}"></div>
+      <div class="fld"><label>상주 시작일</label><input id="f_start" class="mono" value="${f(d&&d.start)}" placeholder="2026-01-01"></div>
+      <div class="fld"><label>상주 종료일 (철수/퇴사 시)</label><input id="f_end" class="mono" value="${f(d&&d.end)}" placeholder="비우면 상주중"></div>
+      <div class="fld full"><label>비고</label><input id="f_note" value="${f(d&&d.note)}" placeholder="예: 프로젝트명, 퇴사 등"></div>
+    </div>
+    <div class="err" id="f_err"></div>
+    <div class="mrow">
+      ${d?`<button class="btn del" data-act="del">삭제</button>`:""}
+      <button class="btn" data-act="cancel">취소</button>
+      <button class="btn primary" data-act="ok">${d?"저장":"추가"}</button>
+    </div>
+  </div>`;
+  document.body.appendChild(bg);
+  bg.querySelector("#f_name").focus();
+  const val=(id)=>bg.querySelector(id).value.trim();
+  const save=async()=>{
+    const name=val("#f_name"); if(!name){ bg.querySelector("#f_err").textContent="성명을 입력하세요."; return; }
+    const start=val("#f_start"), end=val("#f_end");
+    const dur=durText(start,end);
+    const rec={ id: d?d.id : ("n"+Date.now().toString(36)),
+      order: d?d.order : (Math.max(0,...S.devs.map(x=>x.order||0))+1),
+      div: d?(d.div||""):"", name, title:val("#f_title"), role:selVal(bg,"f_role"),
+      company:selVal(bg,"f_company"), phone:val("#f_phone"), email:val("#f_email"),
+      personalEmail:val("#f_pemail"), sub:val("#f_sub"), start, end, dur,
+      note:val("#f_note"), active: end?false:true,
+      monthly: d?(d.monthly||{}):{} };
+    try{ if(S.db) await S.db.doc("developers/"+rec.id).set(rec); bg.remove(); }
+    catch(e){ bg.querySelector("#f_err").textContent="저장 실패: "+(e&&e.message||e); }
+  };
+  const del=async()=>{
+    if(!d) return;
+    if(!confirm(`'${d.name}' 개발자를 명단에서 삭제할까요?\n(등록된 근태 기록은 남아 있으며, 명단에서만 제거됩니다.)`)) return;
+    try{ if(S.db) await S.db.doc("developers/"+d.id).delete(); bg.remove(); }
+    catch(e){ bg.querySelector("#f_err").textContent="삭제 실패: "+(e&&e.message||e); }
+  };
+  bg.addEventListener("click",e=>{
+    if(e.target===bg){bg.remove();return;}
+    const a=e.target.closest("button"); if(!a)return;
+    if(a.dataset.act==="cancel")bg.remove();
+    else if(a.dataset.act==="ok")save();
+    else if(a.dataset.act==="del")del();
+  });
+}
+function durText(start,end){
+  const s=pd(start); if(!s) return "";
+  const e=pd(end)||TODAY;
+  let mo=(e.getFullYear()-s.getFullYear())*12+(e.getMonth()-s.getMonth());
+  if(e.getDate()<s.getDate()) mo--;
+  if(mo<0) mo=0;
+  const y=Math.floor(mo/12), mm=mo%12;
+  return (y?y+"년 ":"")+(mm?mm+"개월":(y?"":"0개월"));
+}
+
+/* ============================ initial data seeding (in-app) ============================ */
+async function seedNow(){
+  if(!S.db || !window.__SEED){ alert("초기 데이터를 찾을 수 없습니다."); return; }
+  if(!confirm("초기 데이터(개발자 56명·일별 근태·공휴일·설정)를 불러올까요?\n같은 항목이 있으면 덮어씁니다.")) return;
+  const SD=window.__SEED, btn=el("seedBtn");
+  if(btn){ btn.disabled=true; btn.textContent="불러오는 중…"; }
+  async function setAll(items, pathFn){
+    for(let i=0;i<items.length;i+=20){
+      await Promise.all(items.slice(i,i+20).map(x=>S.db.doc(pathFn(x)).set(x)));
+    }
+  }
+  try{
+    await setAll(SD.developers, d=>"developers/"+d.id);
+    await setAll(SD.attendance, a=>"attendance/"+a.id);
+    await S.db.doc("meta/config").set(SD.meta);
+    await S.db.doc("meta/holidays").set(SD.holidays);
+    alert("✅ 초기 데이터를 모두 불러왔어요!\n공용 비밀번호: "+(SD.meta.gatePassword||"")+" · 관리자 PIN: "+(SD.meta.pin||""));
+  }catch(e){ alert("실패: "+(e&&e.message||e)); }
+  if(btn){ btn.disabled=false; btn.textContent="⬇ 초기 데이터 불러오기"; }
+  render();
+}
+
+/* ============================ events ============================ */
+document.addEventListener("click",e=>{
+  const tab=e.target.closest(".tab"); if(tab){ S.view=tab.dataset.tab; closePop(); render(); return; }
+  if(e.target.closest("#adminBtn")){ openAdmin(); return; }
+  if(e.target.closest("#pinBtn")){ openChangePin(); return; }
+  if(e.target.closest("#seedBtn")){ seedNow(); return; }
+  if(e.target.closest("[data-holiday]")){ openHolidayMgr(); return; }
+  if(e.target.closest("#themeBtn")){ toggleTheme(); return; }
+  const scope=e.target.closest("[data-scope]"); if(scope){ S.rosterScope=scope.dataset.scope; render(); return; }
+  const hs=e.target.closest("[data-hmscope]"); if(hs){ S.hmScope=hs.dataset.hmscope; render(); return; }
+  const ms=e.target.closest("[data-mscope]"); if(ms){ S.monthScope=ms.dataset.mscope; render(); return; }
+  if(e.target.closest("[data-adddev]")){ openDevForm(null); return; }
+  const ed=e.target.closest("[data-editdev]"); if(ed){ openDevForm(ed.dataset.editdev); return; }
+  const de=e.target.closest("[data-deldev]"); if(de){ openDevForm(de.dataset.deldev); return; }
+  const hc=e.target.closest("[data-hmcell]"); if(hc){ S.calDev=hc.dataset.hmcell; S.calYm=hc.dataset.hmym; S.view="calendar"; closePop(); subMonth(); render(); return; }
+  const mn=e.target.closest("[data-mnav]"); if(mn){ moveMonth(+mn.dataset.mnav); return; }
+  const mcell=e.target.closest(".mc[data-mday]"); if(mcell){ openPop(mcell, mcell.dataset.mdev, +mcell.dataset.mday); return; }
+  const day=e.target.closest(".day.clk[data-day]"); if(day){ openPop(day); return; }
+});
+document.addEventListener("change",e=>{
+  const t=e.target;
+  if(t.hasAttribute&&t.hasAttribute("data-selcustom")){ const c=t.parentElement.querySelector(".cinp"); if(c){c.hidden=(t.value!=="__c"); if(t.value==="__c")c.focus();} return; }
+  if(t.id==="yearSel"){ S.year=+t.value; subYear(); render(); return; }
+  if(t.dataset.role==="divfilter"){ S.filterDiv=t.value; render(); return; }
+  if(t.dataset.role==="hmdiv"){ S.hmDiv=t.value; render(); return; }
+  if(t.dataset.role==="caldev"){ S.calDev=t.value; render(); return; }
+});
+document.addEventListener("input",e=>{
+  if(e.target.dataset.role==="search"){ S.search=e.target.value; const pos=e.target.selectionStart; render();
+    const ni=el("view").querySelector('[data-role="search"]'); if(ni){ni.focus(); try{ni.setSelectionRange(pos,pos);}catch(_){}}}
+});
+window.addEventListener("resize",closePop);
+function moveMonth(delta){
+  let [y,m]=ymParts(S.calYm); m+=delta; if(m<1){m=12;y--;} if(m>12){m=1;y++;}
+  if(y<2024){y=2024;m=1;} if(y>2027){y=2027;m=12;}
+  S.calYm=y+"-"+String(m).padStart(2,"0"); closePop(); subMonth(); render();
+}
+function toggleTheme(){
+  const r=document.documentElement;
+  const cur=r.getAttribute("data-theme");
+  const sysDark=matchMedia("(prefers-color-scheme:dark)").matches;
+  const now = cur? cur : (sysDark?"dark":"light");
+  r.setAttribute("data-theme", now==="dark"?"light":"dark");
+}
+
+
+
+/* ============================ boot (called by main.js after gate) ============================ */
+window.__bootApp = function(){
+  const ys=el("yearSel"); ys.innerHTML=YEARS.map(y=>`<option value="${y}"${y===S.year?" selected":""}>${y}년</option>`).join("");
+  render();
+  if(window.claude&&claude.use) initDb();
+  else { S.db=null; setConn("off","오프라인"); render(); }
+};
+
+</script>
+<script type="module">
+
+import { initializeApp } from "https://www.gstatic.com/firebasejs/10.13.2/firebase-app.js";
+import { getFirestore, collection as fsCollection, doc as fsDoc, onSnapshot, getDoc, getDocs, setDoc, updateDoc, deleteDoc, query as fsQuery, where as fsWhere, orderBy as fsOrderBy, limit as fsLimit } from "https://www.gstatic.com/firebasejs/10.13.2/firebase-firestore.js";
+
+const firebaseConfig = {
+  apiKey: "AIzaSyBWT-33WfpKjVw4vDaB-Kx2SQPxTwbsYWg",
+  authDomain: "bkr-devops-vendor-calendar.firebaseapp.com",
+  projectId: "bkr-devops-vendor-calendar",
+  storageBucket: "bkr-devops-vendor-calendar.firebasestorage.app",
+  messagingSenderId: "961007040519",
+  appId: "1:961007040519:web:9e7b41f72760b3714052a2",
+  measurementId: "G-THX6Z56YX3",
+};
+const fbApp = initializeApp(firebaseConfig);
+const fs = getFirestore(fbApp);
+window.__SEED = {"developers": [{"id": "d01", "order": 1, "div": "BK/TH", "role": "Server", "name": "이용균", "title": "부장", "company": "아시아리펀드", "phone": "010-4228-1442", "email": "lyk@bkrpartner.co.kr", "personalEmail": "", "start": "2025-03-10", "end": "", "dur": "1년 5개월", "sub": "", "note": "", "active": true, "monthly": {"2024": {}, "2025": {"3": 0.0, "4": 0.0, "5": 1.0, "6": 1.5, "7": 1.0, "8": 1.0, "9": 4.0, "10": 0.5, "11": 1.5, "12": 2.0}, "2026": {"1": 1.0, "2": 1.0, "3": 2.0, "4": 2.0, "5": 0.5, "6": 1.5, "7": 0.5, "8": 2.0, "9": 0.0}}}, {"id": "d02", "order": 2, "div": "BK/TH", "role": "Server", "name": "박철우", "title": "차장", "company": "Free", "phone": "010-6856-7004", "email": "pcw@bkrpartner.co.kr", "personalEmail": "", "start": "2019-12-01", "end": "", "dur": "6년 9개월", "sub": "", "note": "", "active": true, "monthly": {"2024": {"1": 1.0, "2": 1.0, "3": 1.0, "4": 1.0, "5": 0.0, "6": 1.0, "7": 2.0, "8": 1.0, "9": 0.0, "10": 0.0, "11": 0.0, "12": 2.0}, "2025": {"1": 1.0, "2": 1.0, "3": 1.0, "4": 1.0, "5": 1.0, "6": 1.0, "7": 1.0, "8": 1.0, "9": 4.0, "10": 1.0, "11": 0.0, "12": 1.0}, "2026": {"1": 0.0, "2": 1.0, "3": 1.0, "4": 0.0, "5": 0.0, "6": 0.0, "7": 1.0, "8": 0.0, "9": 3.0}}}, {"id": "d03", "order": 3, "div": "BK/TH", "role": "Server", "name": "안희민", "title": "대리", "company": "아시아리펀드", "phone": "010-4409-5020", "email": "ahm@bkrpartner.co.kr", "personalEmail": "dksgmlals7711@gmail.com", "start": "2026-07-20", "end": "", "dur": "1개월", "sub": "", "note": "", "active": true, "monthly": {"2024": {}, "2025": {"5": 0.0, "6": 0.0, "7": 0.0, "8": 0.0, "9": 0.0, "10": 0.0, "11": 0.0, "12": 0.0}, "2026": {"8": 2.0, "9": 0.0}}}, {"id": "d04", "order": 4, "div": "BK/TH", "role": "POS", "name": "김종필", "title": "부장", "company": "Free", "phone": "010-9252-2706", "email": "kjp@bkrpartner.co.kr", "personalEmail": "", "start": "2023-04-01", "end": "", "dur": "3년 5개월", "sub": "", "note": "", "active": true, "monthly": {"2024": {"1": 1.0, "2": 1.0, "3": 1.0, "4": 1.0, "5": 0.5, "6": 1.0, "7": 1.0, "8": 3.0, "9": 0.0, "10": 0.0, "11": 0.5, "12": 2.0}, "2025": {"1": 1.0, "2": 2.0, "3": 1.0, "4": 1.0, "5": 0.0, "6": 2.0, "7": 2.0, "8": 1.0, "9": 1.0, "10": 1.0, "11": 0.0, "12": 2.5}, "2026": {"1": 1.0, "2": 1.0, "3": 1.0, "4": 1.0, "5": 2.0, "6": 1.0, "7": 2.0, "8": 0.0, "9": 3.0}}}, {"id": "d05", "order": 5, "div": "BK/TH", "role": "POS", "name": "김재아", "title": "과장", "company": "아시아리펀드", "phone": "010-2037-5759", "email": "kja@bkrpartner.co.kr", "personalEmail": "", "start": "2025-03-10", "end": "", "dur": "1년 5개월", "sub": "", "note": "", "active": true, "monthly": {"2024": {}, "2025": {"3": 0.0, "4": 0.0, "5": 1.0, "6": 0.0, "7": 3.0, "8": 1.0, "9": 1.0, "10": 0.0, "11": 0.5, "12": 2.5}, "2026": {"1": 1.0, "2": 0.0, "3": 1.0, "4": 2.5, "5": 1.0, "6": 2.0, "7": 0.5, "8": 0.0, "9": 1.0}}}, {"id": "d06", "order": 6, "div": "BK/TH", "role": "POS", "name": "허지우", "title": "주임", "company": "아시아리펀드", "phone": "010-9115-5334", "email": "hjw@bkrpartner.co.kr", "personalEmail": "", "start": "2025-06-02", "end": "", "dur": "1년 3개월", "sub": "", "note": "", "active": true, "monthly": {"2024": {}, "2025": {"6": 0.0, "7": 1.0, "8": 0.0, "9": 1.0, "10": 3.0, "11": 1.0, "12": 1.0}, "2026": {"1": 0.0, "2": 0.0, "3": 2.0, "4": 1.0, "5": 0.5, "6": 1.0, "7": 1.0, "8": 0.0, "9": 2.0}}}, {"id": "d07", "order": 7, "div": "BK/TH", "role": "POS", "name": "조진희", "title": "부장", "company": "플리트소프트", "phone": "010-3469-0129", "email": "jjh@bkrpartner.co.kr", "personalEmail": "mazers.jj@gmail.com", "start": "2026-07-20", "end": "", "dur": "1개월", "sub": "", "note": "", "active": true, "monthly": {"2024": {}, "2025": {"3": 0.0, "4": 0.0, "5": 0.0, "6": 0.0, "7": 0.0, "8": 0.0, "9": 0.0, "10": 0.0, "11": 0.0, "12": 0.0}, "2026": {"8": 1.5, "9": 0.0}}}, {"id": "d08", "order": 8, "div": "BK/TH", "role": "POS", "name": "박태웅", "title": "차장", "company": "플리트소프트", "phone": "010-2742-6743", "email": "ptw@bkrpartner.co.kr", "personalEmail": "ptw8912@gmail.com", "start": "2026-07-20", "end": "", "dur": "1개월", "sub": "", "note": "", "active": true, "monthly": {"2024": {}, "2025": {"5": 0.0, "6": 0.0, "7": 0.0, "8": 0.0, "9": 0.0, "10": 0.0, "11": 0.0, "12": 0.0}, "2026": {"8": 0.0, "9": 0.0}}}, {"id": "d09", "order": 9, "div": "BK/TH", "role": "RIMS", "name": "김종성", "title": "부장", "company": "아시아리펀드", "phone": "010-3379-3615", "email": "kjs@bkrpartner.co.kr", "personalEmail": "", "start": "2019-12-01", "end": "", "dur": "6년 9개월", "sub": "", "note": "", "active": true, "monthly": {"2024": {"1": 1.0, "2": 1.0, "3": 1.0, "4": 1.0, "5": 1.0, "6": 1.0, "7": 3.0, "8": 0.0, "9": 1.0, "10": 2.0, "11": 1.0, "12": 0.0}, "2025": {"1": 0.0, "2": 1.0, "3": 1.0, "4": 1.0, "5": 1.0, "6": 1.0, "7": 3.0, "8": 1.0, "9": 1.0, "10": 1.0, "11": 1.0, "12": 1.0}, "2026": {"1": 0.0, "2": 0.0, "3": 0.0, "4": 0.5, "5": 1.5, "6": 0.0, "7": 0.0, "8": 0.0, "9": 3.0}}}, {"id": "d10", "order": 10, "div": "BK/TH", "role": "RIMS", "name": "강은종", "title": "대리", "company": "아시아리펀드", "phone": "010-3053-4476", "email": "kej@bkrpartner.co.kr", "personalEmail": "", "start": "2022-01-01", "end": "", "dur": "4년 8개월", "sub": "", "note": "", "active": true, "monthly": {"2024": {"1": 1.0, "2": 0.0, "3": 0.0, "4": 1.0, "5": 1.0, "6": 1.0, "7": 3.0, "8": 1.0, "9": 1.0, "10": 1.0, "11": 1.0, "12": 1.0}, "2025": {"1": 1.0, "2": 1.0, "3": 1.0, "4": 1.0, "5": 1.0, "6": 1.0, "7": 1.0, "8": 0.0, "9": 1.0, "10": 0.0, "11": 0.0, "12": 1.0}, "2026": {"1": 1.0, "2": 3.0, "3": 1.0, "4": 1.0, "5": 2.0, "6": 0.0, "7": 1.0, "8": 0.0, "9": 0.0}}}, {"id": "d11", "order": 11, "div": "BK/TH", "role": "RIMS", "name": "최인아", "title": "대리", "company": "아시아리펀드", "phone": "010-9282-5481", "email": "cia@bkrpartner.co.kr", "personalEmail": "", "start": "2024-01-01", "end": "", "dur": "2년 8개월", "sub": "", "note": "", "active": true, "monthly": {"2024": {"1": 0.0, "2": 0.0, "3": 1.0, "4": 1.0, "5": 1.0, "6": 0.0, "7": 3.0, "8": 0.0, "9": 0.0, "10": 1.0, "11": 0.0, "12": 1.0}, "2025": {"1": 2.0, "2": 1.0, "3": 0.0, "4": 1.0, "5": 1.0, "6": 0.0, "7": 2.0, "8": 1.0, "9": 1.0, "10": 0.0, "11": 1.0, "12": 1.0}, "2026": {"1": 0.0, "2": 0.0, "3": 0.0, "4": 1.0, "5": 1.0, "6": 1.0, "7": 0.0, "8": 0.0, "9": 1.0}}}, {"id": "d12", "order": 12, "div": "BK/TH", "role": "RIMS", "name": "박연수", "title": "주임", "company": "아시아리펀드", "phone": "010-5298-1689", "email": "pys@bkrpartner.co.kr", "personalEmail": "", "start": "2023-02-01", "end": "", "dur": "3년 7개월", "sub": "", "note": "", "active": true, "monthly": {"2024": {"1": 1.0, "2": 0.0, "3": 0.0, "4": 0.0, "5": 1.0, "6": 1.0, "7": 3.0, "8": 0.0, "9": 0.0, "10": 1.0, "11": 1.0, "12": 1.0}, "2025": {"1": 1.0, "2": 0.0, "3": 1.0, "4": 0.0, "5": 1.0, "6": 1.0, "7": 1.0, "8": 1.0, "9": 0.0, "10": 1.0, "11": 1.5, "12": 2.0}, "2026": {"1": 1.0, "2": 2.5, "3": 1.0, "4": 1.0, "5": 1.0, "6": 1.5, "7": 0.0, "8": 0.0, "9": 0.0}}}, {"id": "d13", "order": 13, "div": "BK/TH", "role": "RIMS", "name": "장현재", "title": "주임", "company": "아시아리펀드", "phone": "010-2336-4899", "email": "jhj@bkrpartner.co.kr", "personalEmail": "", "start": "2024-04-01", "end": "", "dur": "2년 5개월", "sub": "", "note": "", "active": true, "monthly": {"2024": {"4": 1.0, "5": 1.0, "6": 0.0, "7": 3.0, "8": 0.0, "9": 1.0, "10": 1.0, "11": 1.0, "12": 1.0}, "2025": {"1": 1.0, "2": 1.0, "3": 1.5, "4": 1.0, "5": 1.0, "6": 0.0, "7": 1.0, "8": 1.0, "9": 4.0, "10": 0.0, "11": 0.5, "12": 2.0}, "2026": {"1": 1.0, "2": 0.0, "3": 1.0, "4": 2.0, "5": 0.0, "6": 2.0, "7": 1.0, "8": 0.0, "9": 0.0}}}, {"id": "d14", "order": 14, "div": "BKJH", "role": "RIMS", "name": "이태영", "title": "대리", "company": "WINWIZ", "phone": "", "email": "", "personalEmail": "", "start": "", "end": "2024-01-31", "dur": "", "sub": "최인아", "note": "", "active": false, "monthly": {"2024": {"1": 0.0}, "2025": {}, "2026": {}}}, {"id": "d15", "order": 15, "div": "BKR", "role": "HelpDesk", "name": "이미나", "title": "대리", "company": "WINWIZ", "phone": "", "email": "", "personalEmail": "", "start": "", "end": "2024-03-29", "dur": "", "sub": "윤기주", "note": "퇴사", "active": false, "monthly": {"2024": {"1": 1.0, "2": 1.0, "3": 0.0}, "2025": {}, "2026": {}}}, {"id": "d16", "order": 16, "div": "BKR", "role": "POS", "name": "유성규", "title": "차장", "company": "UNIBIZ", "phone": "", "email": "", "personalEmail": "", "start": "", "end": "2024-04-30", "dur": "", "sub": "-", "note": "", "active": false, "monthly": {"2024": {"1": 1.0, "2": 1.0, "3": 0.5, "4": 1.0}, "2025": {}, "2026": {}}}, {"id": "d17", "order": 17, "div": "BKR", "role": "POS", "name": "백동훈", "title": "과장", "company": "UNIBIZ", "phone": "", "email": "", "personalEmail": "", "start": "", "end": "2024-04-30", "dur": "", "sub": "-", "note": "", "active": false, "monthly": {"2024": {"1": 1.0, "2": 0.0, "3": 1.0, "4": 3.0}, "2025": {}, "2026": {}}}, {"id": "d18", "order": 18, "div": "BKR", "role": "POS", "name": "박지호", "title": "과장", "company": "Free", "phone": "", "email": "", "personalEmail": "", "start": "2024-02-01", "end": "2024-04-30", "dur": "2개월", "sub": "최승철", "note": "", "active": false, "monthly": {"2024": {"3": 0.0, "4": 2.0}, "2025": {}, "2026": {}}}, {"id": "d19", "order": 19, "div": "BKR", "role": "Server", "name": "박동철", "title": "부장", "company": "WINWIZ", "phone": "", "email": "", "personalEmail": "", "start": "", "end": "2024-05-31", "dur": "", "sub": "안정환", "note": "", "active": false, "monthly": {"2024": {"1": 1.0, "2": 0.5, "3": 1.0, "4": 1.0, "5": 1.0}, "2025": {}, "2026": {}}}, {"id": "d20", "order": 20, "div": "BKR", "role": "OP", "name": "심현식", "title": "부장", "company": "FKSS", "phone": "010-9042-7715", "email": "gallant75@hanmail.net", "personalEmail": "", "start": "", "end": "2024-06-14", "dur": "", "sub": "곽단", "note": "", "active": false, "monthly": {"2024": {"1": 1.5, "2": 2.0, "3": 1.0, "4": 1.0, "5": 1.0, "6": 1.0}, "2025": {}, "2026": {}}}, {"id": "d21", "order": 21, "div": "BKJH", "role": "HelpDesk", "name": "윤지현", "title": "매니저", "company": "Free", "phone": "", "email": "", "personalEmail": "", "start": "", "end": "2024-06-28", "dur": "", "sub": "-", "note": "퇴사", "active": false, "monthly": {"2024": {"1": 1.0, "2": 0.0, "3": 0.0, "4": 0.0, "5": 0.0, "6": 1.0}, "2025": {}, "2026": {}}}, {"id": "d22", "order": 22, "div": "Project", "role": "POS", "name": "진승원", "title": "차장", "company": "Free", "phone": "", "email": "", "personalEmail": "", "start": "2024-05-07", "end": "2024-08-06", "dur": "2개월", "sub": "-", "note": "App 리뉴얼 프로젝트", "active": false, "monthly": {"2024": {"5": 0.0, "6": 0.0, "7": 3.0, "8": 0.0}, "2025": {}, "2026": {}}}, {"id": "d23", "order": 23, "div": "Project", "role": "직승인", "name": "조규정", "title": "부장", "company": "더나은", "phone": "", "email": "", "personalEmail": "", "start": "2024-05-07", "end": "2024-08-21", "dur": "3개월", "sub": "-", "note": "직승인 프로젝트", "active": false, "monthly": {"2024": {"5": 0.0, "6": 1.0, "7": 0.0, "8": 1.0}, "2025": {}, "2026": {}}}, {"id": "d24", "order": 24, "div": "Project", "role": "Server", "name": "김종원", "title": "부장", "company": "FKSS", "phone": "", "email": "", "personalEmail": "", "start": "2024-07-01", "end": "2024-08-30", "dur": "1개월", "sub": "-", "note": "TH 배민 연동 프로젝트", "active": false, "monthly": {"2024": {"7": 1.0, "8": 0.0}, "2025": {}, "2026": {}}}, {"id": "d25", "order": 25, "div": "Project", "role": "POS", "name": "최종미", "title": "부장", "company": "퓨처젠", "phone": "", "email": "", "personalEmail": "", "start": "2024-07-01", "end": "2024-08-30", "dur": "1개월", "sub": "-", "note": "TH 배민 연동 프로젝트", "active": false, "monthly": {"2024": {"7": 1.0, "8": 0.0}, "2025": {}, "2026": {}}}, {"id": "d26", "order": 26, "div": "Project", "role": "직승인", "name": "최기용", "title": "차장", "company": "더나은", "phone": "", "email": "", "personalEmail": "", "start": "2024-05-20", "end": "2024-09-03", "dur": "3개월", "sub": "-", "note": "직승인 프로젝트", "active": false, "monthly": {"2024": {"5": 0.0, "6": 0.0, "7": 1.0, "8": 1.0}, "2025": {}, "2026": {}}}, {"id": "d27", "order": 27, "div": "BKR", "role": "POS", "name": "최승철", "title": "차장", "company": "Free", "phone": "010-2544-5401", "email": "csc18101@gmail.com", "personalEmail": "", "start": "2024-04-01", "end": "2024-09-30", "dur": "5개월", "sub": "양신열", "note": "", "active": false, "monthly": {"2024": {"4": 0.0, "5": 1.0, "6": 0.0, "7": 3.0, "8": 0.0, "9": 0.0}, "2025": {}, "2026": {}}}, {"id": "d28", "order": 28, "div": "Project", "role": "POS", "name": "이승호", "title": "부장", "company": "Free", "phone": "", "email": "", "personalEmail": "", "start": "2024-08-19", "end": "2025-02-18", "dur": "5개월", "sub": "-", "note": "BKJH 프로젝트", "active": false, "monthly": {"2024": {"8": 0.0, "9": 0.0, "10": 0.0, "11": 1.0, "12": 1.0}, "2025": {"1": 1.0, "2": 0.0}, "2026": {}}}, {"id": "d29", "order": 29, "div": "공통", "role": "PM", "name": "김병철", "title": "수석", "company": "FKL", "phone": "010-6203-4865", "email": "byungchul.kim@fujitsu.com", "personalEmail": "", "start": "2024-05-01", "end": "2025-03-11", "dur": "10개월", "sub": "조정수", "note": "", "active": false, "monthly": {"2024": {"5": 1.0, "6": 0.0, "7": 3.0, "8": 0.0, "9": 0.0, "10": 1.0, "11": 1.5, "12": 2.0}, "2025": {"1": 0.0, "2": 0.0, "3": 1.0, "4": 0.0}, "2026": {}}}, {"id": "d30", "order": 30, "div": "BKR", "role": "POS", "name": "양신열", "title": "부장", "company": "거민", "phone": "", "email": "", "personalEmail": "", "start": "2024-09-23", "end": "2025-03-21", "dur": "5개월", "sub": "하상훈", "note": "", "active": false, "monthly": {"2024": {"9": 0.0, "10": 1.0, "11": 0.5, "12": 1.5}, "2025": {"1": 1.5, "2": 1.0, "3": 0.0, "4": 0.0}, "2026": {}}}, {"id": "d31", "order": 31, "div": "BKR", "role": "Server", "name": "안정환", "title": "차장", "company": "Free", "phone": "", "email": "", "personalEmail": "", "start": "2024-02-10", "end": "2025-03-21", "dur": "1년 1개월", "sub": "정성필", "note": "", "active": false, "monthly": {"2024": {"2": 0.0, "3": 0.0, "4": 1.0, "5": 1.0, "6": 0.0, "7": 1.0, "8": 1.0, "9": 0.0, "10": 1.0, "11": 0.0, "12": 1.0}, "2025": {"1": 1.0, "2": 1.0, "3": 0.0, "4": 0.0}, "2026": {}}}, {"id": "d32", "order": 32, "div": "BKR", "role": "RIMS", "name": "김혜나", "title": "선임", "company": "WINWIZ", "phone": "", "email": "hnkim@winwiz.co.kr", "personalEmail": "", "start": "", "end": "2025-04-04", "dur": "", "sub": "장현재 직무전환 배치", "note": "", "active": false, "monthly": {"2024": {"1": 0.0, "2": 0.0, "3": 0.0, "4": 1.0, "5": 1.0, "6": 0.0, "7": 1.0, "8": 0.0, "9": 0.0, "10": 1.0, "11": 1.0, "12": 2.0}, "2025": {"1": 1.0, "2": 1.0, "3": 1.0, "4": 0.0}, "2026": {}}}, {"id": "d33", "order": 33, "div": "BKJH", "role": "Server", "name": "김진웅", "title": "과장", "company": "Free", "phone": "010-6279-5849", "email": "gwnon123@gmail.com", "personalEmail": "", "start": "2024-05-20", "end": "2025-05-16", "dur": "11개월", "sub": "서동찬", "note": "", "active": false, "monthly": {"2024": {"5": 0.0, "6": 0.0, "7": 1.0, "8": 3.0, "9": 0.0, "10": 1.0, "11": 1.0, "12": 0.5}, "2025": {"1": 1.0, "2": 0.0, "3": 3.0, "4": 1.0, "5": 0.0}, "2026": {}}}, {"id": "d34", "order": 34, "div": "BKR", "role": "Server", "name": "양문석", "title": "부장", "company": "GAUBIZ", "phone": "010-4662-0670", "email": "moonseok.yang@gaubiz.com", "personalEmail": "", "start": "", "end": "2025-05-30", "dur": "", "sub": "정성필", "note": "", "active": false, "monthly": {"2024": {"1": 1.0, "2": 1.0, "3": 0.0, "4": 2.0, "5": 1.0, "6": 0.0, "7": 1.0, "8": 1.0, "9": 1.0, "10": 3.0, "11": 1.0, "12": 2.0}, "2025": {"1": 1.0, "2": 1.0, "3": 0.0, "4": 0.0, "5": 1.0}, "2026": {}}}, {"id": "d35", "order": 35, "div": "BKR", "role": "POS", "name": "박성봉", "title": "수석", "company": "FKSS", "phone": "010-6363-2895", "email": "nedbal19@naver.com", "personalEmail": "", "start": "", "end": "2025-05-30", "dur": "", "sub": "하상훈", "note": "", "active": false, "monthly": {"2024": {"1": 1.0, "2": 2.0, "3": 1.0, "4": 1.0, "5": 1.0, "6": 3.0, "7": 1.0, "8": 1.0, "9": 0.0, "10": 2.0, "11": 1.0, "12": 7.0}, "2025": {"1": 1.0, "2": 1.0, "3": 1.0, "4": 0.0, "5": 1.0}, "2026": {}}}, {"id": "d36", "order": 36, "div": "공통", "role": "PM", "name": "조정수", "title": "수석", "company": "FKL", "phone": "010-9971-2982", "email": "cjs9110@gmail.com", "personalEmail": "", "start": "2025-02-17", "end": "2025-06-20", "dur": "4개월", "sub": "전세나", "note": "", "active": false, "monthly": {"2024": {}, "2025": {"2": 0.0, "3": 0.0, "4": 1.0, "5": 1.0, "6": 0.0}, "2026": {}}}, {"id": "d37", "order": 37, "div": "BKJH", "role": "Server", "name": "서동찬", "title": "과장", "company": "Free", "phone": "010-9103-4545", "email": "ahwkt46@gmail.com", "personalEmail": "", "start": "2025-05-12", "end": "2025-08-29", "dur": "3개월", "sub": "형성희", "note": "", "active": false, "monthly": {"2024": {}, "2025": {"5": 0.0, "6": 0.0, "7": 0.0, "8": 4.0}, "2026": {}}}, {"id": "d38", "order": 38, "div": "공통", "role": "PMO", "name": "전세나", "title": "수석", "company": "FKSS", "phone": "010-9540-4618", "email": "sena.jeon@fujitsu.com", "personalEmail": "", "start": "2025-06-11", "end": "2025-08-29", "dur": "2개월", "sub": "", "note": "", "active": false, "monthly": {"2024": {}, "2025": {"6": 0.0, "7": 1.0, "8": 2.5}, "2026": {}}}, {"id": "d39", "order": 39, "div": "Project", "role": "UI/UX", "name": "오현숙", "title": "부장", "company": "WINWIZ", "phone": "010-9868-0712", "email": "webdesign@winwiz.co.kr", "personalEmail": "", "start": "2025-04-28", "end": "2025-08-29", "dur": "4개월", "sub": "", "note": "배리어프리 키오스크", "active": false, "monthly": {"2024": {}, "2025": {"5": 0.0, "6": 0.0, "7": 0.0, "8": 0.0}, "2026": {}}}, {"id": "d40", "order": 40, "div": "Project", "role": "POS", "name": "김희성", "title": "선임", "company": "WINWIZ", "phone": "010-4163-6514", "email": "hskim@winwiz.co.kr", "personalEmail": "", "start": "2025-04-07", "end": "2025-09-05", "dur": "4개월", "sub": "", "note": "기준정보 고도화", "active": false, "monthly": {"2024": {}, "2025": {"4": 0.0, "5": 0.0, "6": 1.0, "7": 4.0, "8": 1.0, "9": 0.0}, "2026": {}}}, {"id": "d41", "order": 41, "div": "BKR", "role": "Server", "name": "정성필", "title": "수석", "company": "Free", "phone": "010-9599-5386", "email": "spjeong@winwiz.co.kr", "personalEmail": "", "start": "2025-05-07", "end": "2025-09-30", "dur": "4개월", "sub": "", "note": "", "active": false, "monthly": {"2024": {}, "2025": {"5": 0.0, "6": 1.0, "7": 3.0, "8": 1.0, "9": 1.0}, "2026": {}}}, {"id": "d42", "order": 42, "div": "BKR", "role": "POS", "name": "하상훈", "title": "수석", "company": "Free", "phone": "010-9215-9065", "email": "shha@winwiz.co.kr", "personalEmail": "", "start": "2025-05-07", "end": "2025-09-30", "dur": "4개월", "sub": "", "note": "", "active": false, "monthly": {"2024": {}, "2025": {"5": 0.0, "6": 1.0, "7": 1.0, "8": 1.0, "9": 1.0}, "2026": {}}}, {"id": "d43", "order": 43, "div": "Project", "role": "POS", "name": "박진표", "title": "이사", "company": "Free", "phone": "010-3797-6203", "email": "parkpos@gmail.com", "personalEmail": "", "start": "2025-05-19", "end": "2025-10-02", "dur": "4개월", "sub": "", "note": "배리어프리 키오스크", "active": false, "monthly": {"2024": {}, "2025": {"5": 0.0, "6": 0.0, "7": 3.0, "8": 0.5, "9": 0.0, "10": 0.0}, "2026": {}}}, {"id": "d44", "order": 44, "div": "BKJH", "role": "PM", "name": "임남재", "title": "부장", "company": "FKSS", "phone": "010-3215-8925", "email": "", "personalEmail": "", "start": "2025-12-01", "end": "2025-12-05", "dur": "0개월", "sub": "", "note": "", "active": false, "monthly": {"2024": {"1": 0.0, "2": 0.0, "3": 0.0, "4": 0.0, "5": 0.0, "6": 0.0, "7": 0.0, "8": 0.0, "9": 0.0, "10": 0.0, "11": 0.0, "12": 0.0}, "2025": {"12": 0.0}, "2026": {}}}, {"id": "d45", "order": 45, "div": "BKJH", "role": "Server", "name": "형성희", "title": "수석", "company": "FKSS", "phone": "010-3284-3379", "email": "sunghee.hyung@fujitsu.com", "personalEmail": "", "start": "2025-08-18", "end": "2025-12-12", "dur": "3개월", "sub": "김종원", "note": "", "active": false, "monthly": {"2024": {}, "2025": {"8": 0.0, "9": 1.0, "10": 1.0, "11": 1.5, "12": 0.0}, "2026": {}}}, {"id": "d46", "order": 46, "div": "BKJH", "role": "PM", "name": "김주혁", "title": "수석", "company": "FKL", "phone": "010-6249-7354", "email": "juhyeok.kim@fujitsu.com", "personalEmail": "", "start": "2022-11-01", "end": "", "dur": "3년 10개월", "sub": "", "note": "", "active": false, "monthly": {"2024": {"1": 1.0, "2": 2.0, "3": 0.0, "4": 0.5, "5": 1.5, "6": 0.0, "7": 1.0, "8": 3.0, "9": 0.5, "10": 1.0, "11": 0.0, "12": 2.0}, "2025": {"1": 2.0, "2": 5.0, "3": 1.0, "4": 1.5, "5": 0.0, "6": 0.0, "7": 1.0, "8": 3.0, "9": 0.0, "10": 0.0, "11": 0.0, "12": 2.0}, "2026": {}}}, {"id": "d47", "order": 47, "div": "BKJH", "role": "POS", "name": "강승일", "title": "부장", "company": "Free", "phone": "010-6209-9369", "email": "malu9999@hanmail.net", "personalEmail": "", "start": "2020-01-01", "end": "", "dur": "6년 8개월", "sub": "", "note": "", "active": false, "monthly": {"2024": {"1": 4.0, "2": 1.0, "3": 0.0, "4": 1.0, "5": 5.0, "6": 0.0, "7": 1.0, "8": 1.0, "9": 0.0, "10": 1.0, "11": 0.0, "12": 0.0}, "2025": {"1": 2.0, "2": 2.5, "3": 1.0, "4": 1.0, "5": 0.0, "6": 1.0, "7": 4.0, "8": 1.0, "9": 1.0, "10": 0.0, "11": 1.5, "12": 1.0}, "2026": {}}}, {"id": "d48", "order": 48, "div": "BKJH", "role": "Server", "name": "김종원", "title": "부장", "company": "FKSS", "phone": "", "email": "", "personalEmail": "", "start": "2025-12-01", "end": "", "dur": "9개월", "sub": "", "note": "", "active": false, "monthly": {"2024": {}, "2025": {"12": 0.0}, "2026": {}}}, {"id": "d49", "order": 49, "div": "BKR", "role": "RIMS", "name": "오승연", "title": "책임", "company": "Free", "phone": "010-9270-5004", "email": "syoh@winwiz.co.kr", "personalEmail": "", "start": "2025-04-07", "end": "2026-02-27", "dur": "10개월", "sub": "", "note": "기준정보 고도화", "active": false, "monthly": {"2024": {}, "2025": {"4": 0.0, "5": 1.0, "6": 1.0, "7": 1.0, "8": 3.0, "9": 1.0, "10": 1.0, "11": 1.0, "12": 1.0}, "2026": {"1": 1.0, "2": 1.0}}}, {"id": "d50", "order": 50, "div": "BKR", "role": "Server", "name": "김재필", "title": "수석", "company": "WINWIZ", "phone": "010-8446-4480", "email": "jpkim@winwiz.co.kr", "personalEmail": "", "start": "2025-03-10", "end": "2026-03-31", "dur": "12개월", "sub": "", "note": "", "active": false, "monthly": {"2024": {}, "2025": {"3": 0.0, "4": 1.0, "5": 1.0, "6": 1.0, "7": 4.0, "8": 1.0, "9": 1.0, "10": 1.0, "11": 1.0, "12": 1.0}, "2026": {"1": 1.0, "2": 0.0, "3": 2.0}}}, {"id": "d51", "order": 51, "div": "BKR", "role": "OP", "name": "한성일", "title": "대리", "company": "플리트소프트", "phone": "010-3785-7403", "email": "hsi@bkrpartner.co.kr", "personalEmail": "h41ezzz@gmail.com", "start": "2026-07-20", "end": "", "dur": "1개월", "sub": "", "note": "", "active": false, "monthly": {"2024": {}, "2025": {"6": 0.0, "7": 0.0, "8": 0.0, "9": 0.0, "10": 0.0, "11": 0.0, "12": 0.0}, "2026": {}}}, {"id": "d52", "order": 52, "div": "BKR", "role": "POS", "name": "백지훈", "title": "차장", "company": "Free", "phone": "010-9493-3807", "email": "bjh@bkrpartner.co.kr", "personalEmail": "gogo0727@gmail.com", "start": "2025-05-07", "end": "2026-07-31", "dur": "1년 2개월", "sub": "조진희", "note": "", "active": false, "monthly": {"2024": {}, "2025": {"5": 0.0, "6": 1.0, "7": 3.0, "8": 1.0, "9": 1.0, "10": 3.0, "11": 0.0, "12": 0.0}, "2026": {"1": 0.0, "2": 1.0, "3": 1.0, "4": 1.0, "5": 1.0, "6": 1.0, "7": 1.0}}}, {"id": "d53", "order": 53, "div": "BKR", "role": "POS", "name": "박성권", "title": "과장", "company": "Free", "phone": "010-2308-0624", "email": "psk@bkrpartner.co.kr", "personalEmail": "devpsg90@gmail.com", "start": "2025-05-07", "end": "2026-07-31", "dur": "1년 2개월", "sub": "박태웅", "note": "", "active": false, "monthly": {"2024": {}, "2025": {"5": 0.0, "6": 1.0, "7": 1.0, "8": 2.0, "9": 1.0, "10": 4.0, "11": 1.0, "12": 1.0}, "2026": {"1": 1.0, "2": 0.0, "3": 2.0, "4": 1.0, "5": 1.0, "6": 1.0, "7": 1.0}}}, {"id": "d54", "order": 54, "div": "BKR", "role": "HelpDesk", "name": "윤기주", "title": "선임", "company": "WINWIZ", "phone": "010-2882-2592", "email": "ygj@bkrpartner.co.kr", "personalEmail": "kidoli199311@gmail.com", "start": "2024-04-01", "end": "2026-07-31", "dur": "2년 3개월", "sub": "", "note": "", "active": false, "monthly": {"2024": {"4": 0.0, "5": 1.0, "6": 1.0, "7": 3.0, "8": 1.0, "9": 0.0, "10": 1.0, "11": 1.0, "12": 1.0}, "2025": {"1": 1.0, "2": 1.0, "3": 1.0, "4": 1.0, "5": 1.0, "6": 1.0, "7": 2.0, "8": 3.0, "9": 1.0, "10": 0.5, "11": 2.5, "12": 1.0}, "2026": {"1": 1.0, "2": 0.0, "3": 0.0, "4": 1.5, "5": 1.0, "6": 1.0, "7": 3.0}}}, {"id": "d55", "order": 55, "div": "BKR", "role": "HelpDesk", "name": "정영주", "title": "선임", "company": "WINWIZ", "phone": "010-4630-4069", "email": "jyj@bkrpartner.co.kr", "personalEmail": "dudwn75356@gmail.com", "start": "2025-04-01", "end": "2026-07-31", "dur": "1년 3개월", "sub": "", "note": "", "active": false, "monthly": {"2024": {}, "2025": {"4": 0.0, "5": 1.0, "6": 0.0, "7": 0.0, "8": 3.5, "9": 1.0, "10": 2.0, "11": 1.0, "12": 0.5}, "2026": {"1": 3.0, "2": 0.0, "3": 0.0, "4": 2.0, "5": 2.0, "6": 0.0, "7": 1.0}}}, {"id": "d56", "order": 56, "div": "BKR", "role": "OP", "name": "곽단", "title": "책임", "company": "FKSS", "phone": "010-4866-9256", "email": "kd@bkrpartner.co.kr", "personalEmail": "kwakdan5@naver.com", "start": "2024-05-22", "end": "2026-07-31", "dur": "2년 2개월", "sub": "한성일", "note": "", "active": false, "monthly": {"2024": {"5": 0.0, "6": 1.0, "7": 1.0, "8": 1.0, "9": 1.0, "10": 1.0, "11": 0.5, "12": 2.0}, "2025": {"1": 1.0, "2": 2.5, "3": 1.0, "4": 1.0, "5": 1.0, "6": 1.0, "7": 3.0, "8": 1.5, "9": 2.0, "10": 1.0, "11": 1.0, "12": 2.0}, "2026": {"1": 1.0, "2": 1.0, "3": 1.5, "4": 5.0, "5": 0.0, "6": 1.0, "7": 0.0}}}], "attendance": [{"id": "d01__2026-01", "devId": "d01", "ym": "2026-01", "year": 2026, "month": 1, "days": {"12": "야전", "19": "휴가"}}, {"id": "d01__2026-02", "devId": "d01", "ym": "2026-02", "year": 2026, "month": 2, "days": {"4": "오전", "24": "오전"}}, {"id": "d01__2026-03", "devId": "d01", "ym": "2026-03", "year": 2026, "month": 3, "days": {"4": "오전", "16": "야전", "24": "오전", "30": "휴가"}}, {"id": "d01__2026-04", "devId": "d01", "ym": "2026-04", "year": 2026, "month": 4, "days": {"15": "오전", "23": "야전", "27": "휴가", "29": "오전"}}, {"id": "d01__2026-05", "devId": "d01", "ym": "2026-05", "year": 2026, "month": 5, "days": {"19": "오전"}}, {"id": "d01__2026-06", "devId": "d01", "ym": "2026-06", "year": 2026, "month": 6, "days": {"5": "휴가", "18": "오전"}}, {"id": "d01__2026-07", "devId": "d01", "ym": "2026-07", "year": 2026, "month": 7, "days": {"6": "오전", "31": "오전"}}, {"id": "d01__2026-08", "devId": "d01", "ym": "2026-08", "year": 2026, "month": 8, "days": {"27": "여름", "28": "여름", "31": "여름"}}, {"id": "d02__2026-02", "devId": "d02", "ym": "2026-02", "year": 2026, "month": 2, "days": {"27": "휴가"}}, {"id": "d02__2026-03", "devId": "d02", "ym": "2026-03", "year": 2026, "month": 3, "days": {"27": "휴가"}}, {"id": "d02__2026-04", "devId": "d02", "ym": "2026-04", "year": 2026, "month": 4, "days": {"24": "야전"}}, {"id": "d02__2026-07", "devId": "d02", "ym": "2026-07", "year": 2026, "month": 7, "days": {"20": "휴가"}}, {"id": "d02__2026-09", "devId": "d02", "ym": "2026-09", "year": 2026, "month": 9, "days": {"4": "여름"}}, {"id": "d03__2026-08", "devId": "d03", "ym": "2026-08", "year": 2026, "month": 8, "days": {"10": "휴가", "24": "휴가"}}, {"id": "d04__2026-01", "devId": "d04", "ym": "2026-01", "year": 2026, "month": 1, "days": {"30": "휴가"}}, {"id": "d04__2026-02", "devId": "d04", "ym": "2026-02", "year": 2026, "month": 2, "days": {"23": "휴가"}}, {"id": "d04__2026-03", "devId": "d04", "ym": "2026-03", "year": 2026, "month": 3, "days": {"31": "휴가"}}, {"id": "d04__2026-04", "devId": "d04", "ym": "2026-04", "year": 2026, "month": 4, "days": {"6": "휴가"}}, {"id": "d04__2026-05", "devId": "d04", "ym": "2026-05", "year": 2026, "month": 5, "days": {"4": "휴가", "21": "휴가"}}, {"id": "d04__2026-06", "devId": "d04", "ym": "2026-06", "year": 2026, "month": 6, "days": {"30": "휴가"}}, {"id": "d04__2026-07", "devId": "d04", "ym": "2026-07", "year": 2026, "month": 7, "days": {"1": "휴가", "24": "휴가"}}, {"id": "d04__2026-09", "devId": "d04", "ym": "2026-09", "year": 2026, "month": 9, "days": {"28": "여름"}}, {"id": "d05__2026-01", "devId": "d05", "ym": "2026-01", "year": 2026, "month": 1, "days": {"2": "휴가"}}, {"id": "d05__2026-03", "devId": "d05", "ym": "2026-03", "year": 2026, "month": 3, "days": {"4": "오전", "27": "오전"}}, {"id": "d05__2026-04", "devId": "d05", "ym": "2026-04", "year": 2026, "month": 4, "days": {"2": "휴가", "16": "휴가", "29": "오전"}}, {"id": "d05__2026-05", "devId": "d05", "ym": "2026-05", "year": 2026, "month": 5, "days": {"4": "휴가"}}, {"id": "d05__2026-06", "devId": "d05", "ym": "2026-06", "year": 2026, "month": 6, "days": {"4": "야전", "10": "휴가", "12": "휴가"}}, {"id": "d05__2026-07", "devId": "d05", "ym": "2026-07", "year": 2026, "month": 7, "days": {"30": "오전"}}, {"id": "d06__2026-03", "devId": "d06", "ym": "2026-03", "year": 2026, "month": 3, "days": {"9": "휴가", "10": "휴가"}}, {"id": "d06__2026-04", "devId": "d06", "ym": "2026-04", "year": 2026, "month": 4, "days": {"20": "휴가"}}, {"id": "d06__2026-05", "devId": "d06", "ym": "2026-05", "year": 2026, "month": 5, "days": {"8": "오전"}}, {"id": "d06__2026-06", "devId": "d06", "ym": "2026-06", "year": 2026, "month": 6, "days": {"15": "휴가"}}, {"id": "d06__2026-07", "devId": "d06", "ym": "2026-07", "year": 2026, "month": 7, "days": {"27": "휴가"}}, {"id": "d06__2026-09", "devId": "d06", "ym": "2026-09", "year": 2026, "month": 9, "days": {"28": "여름"}}, {"id": "d07__2026-08", "devId": "d07", "ym": "2026-08", "year": 2026, "month": 8, "days": {"14": "오후", "26": "휴가", "31": "오전"}}, {"id": "d09__2026-01", "devId": "d09", "ym": "2026-01", "year": 2026, "month": 1, "days": {"12": "야전", "13": "병가", "14": "병가", "15": "병가"}}, {"id": "d09__2026-03", "devId": "d09", "ym": "2026-03", "year": 2026, "month": 3, "days": {"16": "야전"}}, {"id": "d09__2026-04", "devId": "d09", "ym": "2026-04", "year": 2026, "month": 4, "days": {"15": "오후"}}, {"id": "d09__2026-05", "devId": "d09", "ym": "2026-05", "year": 2026, "month": 5, "days": {"8": "휴가", "29": "오후"}}, {"id": "d09__2026-06", "devId": "d09", "ym": "2026-06", "year": 2026, "month": 6, "days": {"4": "야전"}}, {"id": "d10__2026-01", "devId": "d10", "ym": "2026-01", "year": 2026, "month": 1, "days": {"21": "휴가"}}, {"id": "d10__2026-02", "devId": "d10", "ym": "2026-02", "year": 2026, "month": 2, "days": {"19": "휴가", "23": "휴가", "27": "휴가"}}, {"id": "d10__2026-03", "devId": "d10", "ym": "2026-03", "year": 2026, "month": 3, "days": {"13": "휴가"}}, {"id": "d10__2026-04", "devId": "d10", "ym": "2026-04", "year": 2026, "month": 4, "days": {"20": "휴가"}}, {"id": "d10__2026-05", "devId": "d10", "ym": "2026-05", "year": 2026, "month": 5, "days": {"21": "휴가", "22": "휴가"}}, {"id": "d10__2026-07", "devId": "d10", "ym": "2026-07", "year": 2026, "month": 7, "days": {"10": "휴가"}}, {"id": "d11__2026-04", "devId": "d11", "ym": "2026-04", "year": 2026, "month": 4, "days": {"21": "휴가"}}, {"id": "d11__2026-05", "devId": "d11", "ym": "2026-05", "year": 2026, "month": 5, "days": {"22": "휴가"}}, {"id": "d11__2026-06", "devId": "d11", "ym": "2026-06", "year": 2026, "month": 6, "days": {"26": "휴가"}}, {"id": "d11__2026-09", "devId": "d11", "ym": "2026-09", "year": 2026, "month": 9, "days": {"4": "휴가"}}, {"id": "d12__2026-01", "devId": "d12", "ym": "2026-01", "year": 2026, "month": 1, "days": {"30": "휴가"}}, {"id": "d12__2026-02", "devId": "d12", "ym": "2026-02", "year": 2026, "month": 2, "days": {"13": "휴가", "20": "휴가", "26": "오전"}}, {"id": "d12__2026-03", "devId": "d12", "ym": "2026-03", "year": 2026, "month": 3, "days": {"23": "휴가"}}, {"id": "d12__2026-04", "devId": "d12", "ym": "2026-04", "year": 2026, "month": 4, "days": {"30": "휴가"}}, {"id": "d12__2026-05", "devId": "d12", "ym": "2026-05", "year": 2026, "month": 5, "days": {"26": "휴가"}}, {"id": "d12__2026-06", "devId": "d12", "ym": "2026-06", "year": 2026, "month": 6, "days": {"9": "오후", "30": "휴가"}}, {"id": "d13__2026-01", "devId": "d13", "ym": "2026-01", "year": 2026, "month": 1, "days": {"26": "휴가"}}, {"id": "d13__2026-03", "devId": "d13", "ym": "2026-03", "year": 2026, "month": 3, "days": {"20": "휴가"}}, {"id": "d13__2026-04", "devId": "d13", "ym": "2026-04", "year": 2026, "month": 4, "days": {"20": "휴가", "21": "휴가"}}, {"id": "d13__2026-06", "devId": "d13", "ym": "2026-06", "year": 2026, "month": 6, "days": {"2": "휴가", "12": "휴가"}}, {"id": "d13__2026-07", "devId": "d13", "ym": "2026-07", "year": 2026, "month": 7, "days": {"3": "휴가"}}, {"id": "d49__2026-01", "devId": "d49", "ym": "2026-01", "year": 2026, "month": 1, "days": {"23": "휴가"}}, {"id": "d49__2026-02", "devId": "d49", "ym": "2026-02", "year": 2026, "month": 2, "days": {"20": "휴가"}}, {"id": "d50__2026-01", "devId": "d50", "ym": "2026-01", "year": 2026, "month": 1, "days": {"12": "야전", "23": "휴가"}}, {"id": "d50__2026-03", "devId": "d50", "ym": "2026-03", "year": 2026, "month": 3, "days": {"6": "휴가", "16": "야전", "26": "오전", "30": "오전"}}, {"id": "d52__2026-01", "devId": "d52", "ym": "2026-01", "year": 2026, "month": 1, "days": {"8": "재택", "9": "재택"}}, {"id": "d52__2026-02", "devId": "d52", "ym": "2026-02", "year": 2026, "month": 2, "days": {"2": "휴가"}}, {"id": "d52__2026-03", "devId": "d52", "ym": "2026-03", "year": 2026, "month": 3, "days": {"9": "휴가"}}, {"id": "d52__2026-04", "devId": "d52", "ym": "2026-04", "year": 2026, "month": 4, "days": {"6": "휴가"}}, {"id": "d52__2026-05", "devId": "d52", "ym": "2026-05", "year": 2026, "month": 5, "days": {"4": "휴가"}}, {"id": "d52__2026-06", "devId": "d52", "ym": "2026-06", "year": 2026, "month": 6, "days": {"12": "휴가"}}, {"id": "d52__2026-07", "devId": "d52", "ym": "2026-07", "year": 2026, "month": 7, "days": {"10": "휴가"}}, {"id": "d53__2026-01", "devId": "d53", "ym": "2026-01", "year": 2026, "month": 1, "days": {"29": "휴가"}}, {"id": "d53__2026-03", "devId": "d53", "ym": "2026-03", "year": 2026, "month": 3, "days": {"13": "휴가", "16": "휴가"}}, {"id": "d53__2026-04", "devId": "d53", "ym": "2026-04", "year": 2026, "month": 4, "days": {"20": "휴가"}}, {"id": "d53__2026-05", "devId": "d53", "ym": "2026-05", "year": 2026, "month": 5, "days": {"6": "휴가"}}, {"id": "d53__2026-06", "devId": "d53", "ym": "2026-06", "year": 2026, "month": 6, "days": {"19": "휴가"}}, {"id": "d53__2026-07", "devId": "d53", "ym": "2026-07", "year": 2026, "month": 7, "days": {"20": "휴가"}}, {"id": "d54__2026-01", "devId": "d54", "ym": "2026-01", "year": 2026, "month": 1, "days": {"26": "휴가"}}, {"id": "d54__2026-04", "devId": "d54", "ym": "2026-04", "year": 2026, "month": 4, "days": {"24": "오후", "27": "휴가"}}, {"id": "d54__2026-05", "devId": "d54", "ym": "2026-05", "year": 2026, "month": 5, "days": {"15": "휴가", "19": "민방위"}}, {"id": "d54__2026-06", "devId": "d54", "ym": "2026-06", "year": 2026, "month": 6, "days": {"22": "휴가"}}, {"id": "d54__2026-07", "devId": "d54", "ym": "2026-07", "year": 2026, "month": 7, "days": {"13": "휴가", "14": "휴가", "15": "휴가"}}, {"id": "d55__2026-01", "devId": "d55", "ym": "2026-01", "year": 2026, "month": 1, "days": {"19": "휴가", "26": "휴가", "29": "휴가"}}, {"id": "d55__2026-04", "devId": "d55", "ym": "2026-04", "year": 2026, "month": 4, "days": {"1": "휴가", "2": "휴가"}}, {"id": "d55__2026-05", "devId": "d55", "ym": "2026-05", "year": 2026, "month": 5, "days": {"14": "휴가", "18": "휴가"}}, {"id": "d55__2026-07", "devId": "d55", "ym": "2026-07", "year": 2026, "month": 7, "days": {"20": "휴가"}}, {"id": "d56__2026-01", "devId": "d56", "ym": "2026-01", "year": 2026, "month": 1, "days": {"2": "휴가", "21": "야후", "22": "야후"}}, {"id": "d56__2026-02", "devId": "d56", "ym": "2026-02", "year": 2026, "month": 2, "days": {"6": "휴가"}}, {"id": "d56__2026-03", "devId": "d56", "ym": "2026-03", "year": 2026, "month": 3, "days": {"6": "오후", "27": "휴가"}}, {"id": "d56__2026-04", "devId": "d56", "ym": "2026-04", "year": 2026, "month": 4, "days": {"24": "휴가", "27": "휴가", "28": "휴가", "29": "휴가", "30": "휴가"}}, {"id": "d56__2026-05", "devId": "d56", "ym": "2026-05", "year": 2026, "month": 5, "days": {"8": "야후"}}, {"id": "d56__2026-06", "devId": "d56", "ym": "2026-06", "year": 2026, "month": 6, "days": {"8": "휴가"}}], "holidays": {"dates": {"2026-01-01": "신정", "2026-02-16": "설날연휴", "2026-02-17": "설날", "2026-02-18": "설날연휴", "2026-03-01": "삼일절", "2026-03-02": "삼일절 대체", "2026-05-05": "어린이날·부처님오신날", "2026-05-25": "부처님오신날 대체", "2026-06-06": "현충일", "2026-08-15": "광복절", "2026-08-17": "광복절 대체", "2026-09-24": "추석연휴", "2026-09-25": "추석", "2026-09-26": "추석연휴", "2026-10-03": "개천절", "2026-10-05": "개천절 대체", "2026-10-09": "한글날", "2026-12-25": "성탄절"}}, "meta": {"pin": "1004", "gatePassword": "bkr2026"}};
+
+// ----- db adapter -> window.claude.use("db") -----
+(function(){
+  const colRef=(p)=>fsCollection(fs,...p.split("/"));
+  const docRef=(p)=>fsDoc(fs,...p.split("/"));
+  function makeQuery(path){const cs=[];const api={path,
+    where(f,o,v){cs.push(fsWhere(f,o,v));return api;},
+    orderBy(f,d){cs.push(fsOrderBy(f,d||"asc"));return api;},
+    limit(n){cs.push(fsLimit(n));return api;},
+    _q(){return cs.length?fsQuery(colRef(path),...cs):colRef(path);},
+    onSnapshot(next,err){return onSnapshot(api._q(),s=>next({docs:s.docs.map(d=>({id:d.id,exists:true,data:()=>d.data()}))}),err||(()=>{}));},
+    get(){return getDocs(api._q()).then(s=>({docs:s.docs.map(d=>({id:d.id,exists:true,data:()=>d.data()}))}));},
+    doc(id){return makeDoc(path+"/"+id);}};return api;}
+  function makeDoc(path){return {id:path.split("/").pop(),path,
+    get(){return getDoc(docRef(path)).then(s=>({exists:s.exists(),data:()=>s.data()}));},
+    set(d){return setDoc(docRef(path),d);},update(d){return updateDoc(docRef(path),d);},delete(){return deleteDoc(docRef(path));},
+    onSnapshot(next,err){return onSnapshot(docRef(path),s=>next({exists:s.exists(),data:()=>s.data()}),err||(()=>{}));},
+    collection(p){return makeQuery(path+"/"+p);}};}
+  const db={collection:(p)=>makeQuery(p),doc:(p)=>makeDoc(p)};
+  window.claude={use:(n)=>Promise.resolve(n==="db"?db:null)};
+})();
+
+// ----- gate -----
+const gate=document.getElementById("gate"), input=document.getElementById("gate-pw"),
+  btn=document.getElementById("gate-btn"), err=document.getElementById("gate-err");
+let gatePw=undefined;
+async function loadGatePw(){try{const s=await getDoc(fsDoc(fs,"meta","config"));gatePw=s.exists()&&s.data().gatePassword!=null?String(s.data().gatePassword):null;}catch(e){gatePw=null;}}
+loadGatePw();
+let started=false;
+async function startApp(){if(started)return;started=true;gate.hidden=true;window.__bootApp();}
+async function tryPass(){if(gatePw===undefined)await loadGatePw();const v=input.value;
+  if(gatePw===null||v===gatePw){try{sessionStorage.setItem("bkr_gate","1");}catch(e){}startApp();}
+  else{err.textContent="비밀번호가 일치하지 않습니다.";input.value="";input.focus();}}
+btn.addEventListener("click",tryPass);
+input.addEventListener("keydown",e=>{if(e.key==="Enter")tryPass();});
+let remembered=false;try{remembered=sessionStorage.getItem("bkr_gate")==="1";}catch(e){}
+if(remembered)startApp();else input.focus();
+
+</script>
 </body>
 </html>
