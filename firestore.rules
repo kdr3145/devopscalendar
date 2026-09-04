@@ -1,0 +1,20 @@
+rules_version = '2';
+// ⚠️ 기본(간단) 규칙: 링크를 아는 누구나 읽기/쓰기 가능. 공용 비밀번호 게이트는 화면 접근만 막습니다.
+// 사내 내부용으로 시작할 때 사용하고, 보안을 강화하려면 아래 "인증 필요" 규칙으로 바꾸고
+// Firebase Authentication(익명/이메일)을 켜세요.
+service cloud.firestore {
+  match /databases/{database}/documents {
+    match /{document=**} {
+      allow read, write: if true;
+    }
+  }
+}
+
+// ── 보안 강화 버전(권장, 참고용) ───────────────────────────
+// service cloud.firestore {
+//   match /databases/{database}/documents {
+//     match /{document=**} {
+//       allow read, write: if request.auth != null;
+//     }
+//   }
+// }

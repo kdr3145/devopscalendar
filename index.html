@@ -1,0 +1,54 @@
+<!doctype html>
+<html lang="ko">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="color-scheme" content="light dark">
+<title>개발 근태 관제</title>
+<link rel="preconnect" href="https://cdn.jsdelivr.net">
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/orioncactus/pretendard@v1.3.9/dist/web/variable/pretendardvariable.css">
+</head>
+<body>
+<div id="gate">
+  <div class="gbox">
+    <div class="gmark">BKR</div>
+    <h1>개발 근태 관제</h1>
+    <p>접속하려면 공용 비밀번호를 입력하세요.</p>
+    <input type="password" id="gate-pw" inputmode="text" autocomplete="off" placeholder="공용 비밀번호">
+    <button id="gate-btn">입장</button>
+    <div class="gerr" id="gate-err"></div>
+  </div>
+</div>
+<header class="top">
+  <div class="top-in">
+    <div class="brand">
+      <div class="mark">BKR</div>
+      <div>
+        <h1>개발자 근태 관제</h1>
+        <p>IT&amp;Digital 본부 · Retail Solution팀</p>
+      </div>
+    </div>
+    <div class="hd-ctrl">
+      <div class="conn"><span class="dot" id="dot"></span><span id="connlab">연결 중…</span></div>
+      <select class="sel" id="yearSel" aria-label="연도 선택"></select>
+      <button class="btn ghost" id="themeBtn" title="테마 전환" aria-label="테마 전환">◐</button>
+      <button class="btn ghost" id="pinBtn" hidden>PIN 변경</button>
+      <button class="btn" id="adminBtn">🔒 관리자</button>
+    </div>
+  </div>
+</header>
+
+<div class="wrap">
+  <nav class="tabs" id="tabs">
+    <button class="tab on" data-tab="summary">요약</button>
+    <button class="tab" data-tab="roster">명단·연락처 <span class="n" id="nRoster"></span></button>
+    <button class="tab" data-tab="heatmap">연차·투입 현황</button>
+    <button class="tab" data-tab="month">월 근태(종합)</button>
+    <button class="tab" data-tab="calendar">근태 달력(개인)</button>
+  </nav>
+  <main id="view"></main>
+  <p class="footnote" id="foot"></p>
+</div>
+<script type="module" src="/src/main.js"></script>
+</body>
+</html>
